@@ -107,3 +107,7 @@ td.green-cell {
 .align-center {
   text-align: center;
 }
+
+.indented {
+    padding-left: 20px; /* adjust the indentation as needed */
+}

@@ -32,7 +32,6 @@ def update_status(context, token):
         update_workflow_status(project.benchmarks, token)
         update_workflow_status(project.live_build, token)
         for other_wf in project.other_workflows:
-            print("Updating workflow:", other_wf.workflow_name)
             update_workflow_status(other_wf, token)
 
 

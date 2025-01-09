@@ -1,16 +1,98 @@
 page_title: cf-gha-tracked-workflows
 
 repos:  
+  - repo: cardano-devkit
+    owner: cardano-foundation
+    other-workflows:
+      create-release: release.yml
+      run-tests: test.yml
+      ship-release-artifacts: publish.yml
+
   - repo: cardano-graphql
     owner: cardano-foundation
     other-workflows:
-      ci-builds: ci.yml
-      post-integration: post-integration.yml
+      post-integration: post_integration.yml
+      ci: ci.yml
+
+  - repo: cardano-rosetta
+    owner: cardano-foundation
+    other-workflows:
+      api-test: api-test.yml
+      ci: ci.yml
+      nightly: nightly.yml
+      post-integration: post_integration.yml
+      post-release: post_release.yml
+      pre-release: pre_release.yml
+
+  - repo: cardano-rosetta-java
+    owner: cardano-foundation
+    other-workflows:
+      bump-version: bump-version.yaml
+      build-docker-file: docker-build.yaml
+      build-main-branch: main.yaml
+      build-release: release.yaml
+      feature-branch: feature-mvn-build.yaml
+      fossa-scan: fossa-scan.yaml
+      integration-test: integration-test.yaml
+      sonar-cloud-report: sonar-cloud-report.yml
+
+  - repo: cardano-token-registry
+    owner: cardano-foundation
+    other-workflows:
+      ci: ci.yaml
+
+  - repo: cardano-wallet
+    owner: cardano-foundation
+    other-workflows:
+      auto-approve-docs: approve-docs.yml
+      ci: haskell.yml
+      delete-old-workflow-runs: cleanup.yml
+      lean: lean.yml
+      publish-docs: publish.yml
+      rubocop: rubocop.yml
+
+  - repo: cf-explorer-landing
+    owner: cardano-foundation
+    other-workflows:
+      vercel-deploy: gh-vercel-deploy.yaml
+
+  - repo: cf-helm-charts
+    owner: cardano-foundation
+    other-workflows:
+      release-charts: release.yml
+
+  - repo: cf-ledger-sync
+    owner: cardano-foundation
+    other-workflows: 
+      build: build.yml
+      codeql: codeql.yml
+      docs-deploy: docs-deploy.yml
+      publish-artifacts-and-create-release: publish.yaml
+      test-docs-deploy: docs-test-deploy.yml
   
   - repo: cf-identity-wallet
     owner: cardano-foundation
     other-workflows:
-      docker-builds: docker-builds.yml
-      e2e-mobile-tests: e2e-mobile-tests.yml 
-      verify-branch: gh-verify-branch.yml
-      verify-pr: gh-verify-pr.yml
+      docker-builds: docker-builds.yaml
+      e2e-mobile-tests: e2e_mobile_tests.yaml 
+      verify-branch: gh-verify-branch.yaml
+      verify-pr: gh-verify-pr.yaml
+
+  - repo: cf-lob-platform
+    owner: cardano-foundation
+    other-workflows:
+      build: build.yml
+      run-tests: build-with-tests.yaml
+
+  - repo: developer-portal
+    owner: cardano-foundation
+    other-workflows:
+      codeql: codeql-analysis.yml
+      yarn-build: yarn-build.yml
+
+  - repo: merkle-tree-java
+    owner: cardano-foundation
+    other-workflows:
+      build: build.yml
+      codeql: codeql.yml
+      create-release: maven-release.yml

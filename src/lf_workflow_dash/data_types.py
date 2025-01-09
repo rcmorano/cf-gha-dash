@@ -11,6 +11,7 @@ class WorkflowElemData:
     """Per-workflow information"""
 
     workflow_name: str = ""
+    lf_workflow_name: str = ""
     workflow_url: str = ""
     workflow_status: str = ""
     display_class: str = ""
@@ -21,8 +22,9 @@ class WorkflowElemData:
     conclusion_time: str = ""
     is_stale: bool = False
 
-    def __init__(self, workflow_name, repo_url, owner, repo):
+    def __init__(self, workflow_name, repo_url, owner, repo, lf_workflow_name):
         self.workflow_name = workflow_name
+        self.lf_workflow_name = lf_workflow_name
         self.owner = owner
         self.repo = repo
         self.workflow_url = f"{repo_url}/actions/workflows/{self.workflow_name}"
@@ -99,26 +101,26 @@ def read_yaml_file(file_path):
 
         if "smoke-test" in item:
             project_data.smoke_test = WorkflowElemData(
-                item["smoke-test"], repo_url=project_data.repo_url, owner=owner, repo=repo
+                item["smoke-test"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="smoke-test"
             )
         if "build-docs" in item:
             project_data.build_docs = WorkflowElemData(
-                item["build-docs"], repo_url=project_data.repo_url, owner=owner, repo=repo
+                item["build-docs"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="build-docs"
             )
         if "benchmarks" in item:
             project_data.benchmarks = WorkflowElemData(
-                item["benchmarks"], repo_url=project_data.repo_url, owner=owner, repo=repo
+                item["benchmarks"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="benchmarks"
             )
         if "live-build" in item:
             project_data.live_build = WorkflowElemData(
-                item["live-build"], repo_url=project_data.repo_url, owner=owner, repo=repo
+                item["live-build"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="live-build"
             )
 
         if "other-workflows" in item:
-            for workflow in item["other-workflows"]:
+            for key, value in item["other-workflows"].items():
                 project_data.other_workflows.append(
                     WorkflowElemData(
-                        workflow, repo_url=project_data.repo_url, owner=owner, repo=repo
+                        value, repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name=key
                     )
                 )
 

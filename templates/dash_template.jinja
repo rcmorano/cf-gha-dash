@@ -15,97 +15,35 @@
     <body>
     <table>
         <tr>
-            <th colspan="1" scope="colgroup">Repository</th>
-            <th colspan="1" scope="colgroup">Copier<br>Version</th>
-            <th colspan="3" scope="colgroup">Nightly Test</th>
-            <th colspan="3" scope="colgroup">Nightly<br>Benchmarks</th>
-            <th colspan="3" scope="colgroup">Build Docs</th>
-            <th colspan="3" scope="colgroup">Live Build</th>
-            <th colspan="1" scope="colgroup">Other Workflows</th>
+            <th colspan="1" scope="colgroup">Repository/workflow</th>
+            <th colspan="1" scope="colgroup">Status</th>
+            <th colspan="1" scope="colgroup">Last run</th>
         </tr>
     </tr>
 
     {% for project in all_projects %}
     <tr>
         <td><a href="{{project.repo_url}}">{{project.repo}}</a></td>
-        <td><a href="{{project.repo_url}}">{{project.copier_version}}</a></td>
-
-        <!-- Smoke Test -->
-        <td class="{{project.smoke_test.display_class}} align-right">
-            {%- if project.smoke_test.is_stale %}
-            <span class="gray-cell">stale</span><br/>
-            {%- endif %}
-            {{project.smoke_test.workflow_status}}
-        </td>
-        <td class="{{project.smoke_test.display_class}} align-center">
-            {%- if project.smoke_test.is_stale %}
-            <i class="gray-cell fa fa-clock-o"></i><br/>
-            {%- endif %}
-            <i class="{{project.smoke_test.icon_class}}"></i>
-        </td>
-        <td class="{{project.smoke_test.display_class}}">
-            <a href="{{project.smoke_test.workflow_url}}">
-                {{project.smoke_test.conclusion_time}}
-            </a>
-        </td>
-
-        <!-- Benchmarks -->
-        <td class="{{project.benchmarks.display_class}} align-right">
-            {%- if project.benchmarks.is_stale %}
-            <span class="gray-cell">stale</span><br/>
-            {%- endif %}
-            {{project.benchmarks.workflow_status}}
-        </td>
-        <td class="{{project.benchmarks.display_class}} align-center">
-            {%- if project.benchmarks.is_stale %}
-            <i class="gray-cell fa fa-clock-o"></i><br/>
-            {%- endif %}
-            <i class="{{project.benchmarks.icon_class}}"></i>
-        </td>
-        <td class="{{project.benchmarks.display_class}}">
-            <a href="{{project.benchmarks.workflow_url}}">
-                {{project.benchmarks.conclusion_time}}
-            </a>
-        </td>
-
-        <!-- Build Docs (don't worry about is_stale here) -->
-        <td class="{{project.build_docs.display_class}} align-right">
-            {{project.build_docs.workflow_status}}
-        </td>
-        <td class="{{project.build_docs.display_class}} align-center">
-            <i class="{{project.build_docs.icon_class}}"></i>
-        </td>
-        <td class="{{project.build_docs.display_class}}">
-            <a href="{{project.build_docs.workflow_url}}">
-                {{project.build_docs.conclusion_time}}
-            </a>
-        </td>
-
-        <!-- Live Build -->
-        <td class="{{project.live_build.display_class}} align-right">
-            {%- if project.live_build.is_stale %}
-            <span class="gray-cell">stale</span><br/>
-            {%- endif %}
-            {{project.live_build.workflow_status}}
-        </td>
-        <td class="{{project.live_build.display_class}} align-center">
-            {%- if project.live_build.is_stale %}
-            <i class="gray-cell fa fa-clock-o"></i><br/>
-            {%- endif %}
-            <i class="{{project.live_build.icon_class}}"></i>
-        </td>
-        <td class="{{project.live_build.display_class}}">
-            <a href="{{project.live_build.workflow_url}}">
-                {{project.live_build.conclusion_time}}
-            </a>
-        </td>
 
         <!-- Other -->
-        <td>
-            {% for workflow in project.other_workflows %}
-                <a href="{{workflow.url}}">{{workflow.name}} {{workflow.status}}</a>
-            {% endfor %}
-        </td>
+        {% for workflow in project.other_workflows %}
+        <tr>
+            <td class="indented">{{workflow.lf_workflow_name}} </td>
+            <td class="{{workflow.display_class}}">
+                {%- if workflow.is_stale %}
+                <span class="gray-cell">stale</span>
+                <i class="gray-cell fa fa-clock-o"></i><br>
+                {%- endif %}
+                {{workflow.workflow_status}}
+                <i class="{{workflow.icon_class}}"></i>
+            </td>
+            <td class="{{workflow.display_class}}">
+                <a href="{{workflow.workflow_url}}">
+                    {{workflow.conclusion_time}}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
     </tr>
     {% endfor %}
     </table>
