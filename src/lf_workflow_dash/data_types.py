@@ -114,6 +114,14 @@ def read_yaml_file(file_path):
                 item["live-build"], repo_url=project_data.repo_url, owner=owner, repo=repo
             )
 
+        if "other-workflows" in item:
+            for workflow in item["other-workflows"]:
+                project_data.other_workflows.append(
+                    WorkflowElemData(
+                        workflow, repo_url=project_data.repo_url, owner=owner, repo=repo
+                    )
+                )
+
         all_projects.append(project_data)
 
     timezone = pytz.timezone("America/New_York")
