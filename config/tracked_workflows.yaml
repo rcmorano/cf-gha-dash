@@ -3,12 +3,14 @@ page_title: cf-gha-tracked-workflows
 repos:  
   - repo: cardano-graphql
     owner: cardano-foundation
-    ci-builds: ci.yml
-    post-integration: post-integration.yml
+    other-workflows:
+      ci-builds: ci.yml
+      post-integration: post-integration.yml
   
   - repo: cf-identity-wallet
     owner: cardano-foundation
-    docker-builds: docker-builds.yml
-    e2e-mobile-tests: e2e-mobile-tests.yml 
-    verify-branch: gh-verify-branch.yml
-    verify-pr: gh-verify-pr.yml
+    other-workflows:
+      docker-builds: docker-builds.yml
+      e2e-mobile-tests: e2e-mobile-tests.yml 
+      verify-branch: gh-verify-branch.yml
+      verify-pr: gh-verify-pr.yml

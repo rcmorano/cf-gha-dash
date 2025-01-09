@@ -26,6 +26,7 @@ def update_status(context, token):
     """
     for project in context["all_projects"]:
         print(project.repo)
+        print("Updating status for project: ", project.repo)
         update_copier_version(project, token)
         update_workflow_status(project.smoke_test, token)
         update_workflow_status(project.build_docs, token)
