@@ -23,26 +23,27 @@
 
     {% for project in all_projects %}
     <tr>
-        <td><a href="{{project.repo_url}}">{{project.repo}}</a></td>
+        <td><a href="{{project.repo_url}}">{{project.repo}}</a>
 
-        <!-- Other -->
-        {% for workflow in project.other_workflows %}
-        <tr>
-            <td class="indented">{{workflow.lf_workflow_name}} </td>
-            <td class="{{workflow.display_class}}">
-                {%- if workflow.is_stale %}
-                <span class="gray-cell">stale</span>
-                <i class="gray-cell fa fa-clock-o"></i><br>
-                {%- endif %}
-                {{workflow.workflow_status}}
-                <i class="{{workflow.icon_class}}"></i>
-            </td>
-            <td class="{{workflow.display_class}}">
-                <a href="{{workflow.workflow_url}}">
-                    {{workflow.conclusion_time}}
-                </a>
-            </td>
-        </tr>
+          <!-- Other -->
+          {% for workflow in project.other_workflows %}
+          <tr>
+              <td class="indented">{{workflow.lf_workflow_name}} </td>
+              <td class="{{workflow.display_class}} align-center">
+                  {%- if workflow.is_stale %}
+                  <span class="gray-cell">stale</span>
+                  <i class="gray-cell fa fa-clock-o"></i><br>
+                  {%- endif %}
+                  {{workflow.workflow_status}}
+                  <i class="{{workflow.icon_class}}"></i>
+              </td>
+              <td class="{{workflow.display_class}} align-center">
+                  <a href="{{workflow.workflow_url}}">
+                      {{workflow.conclusion_time}}
+                  </a>
+              </td>
+          </tr>
+        </td>
         {% endfor %}
     </tr>
     {% endfor %}
