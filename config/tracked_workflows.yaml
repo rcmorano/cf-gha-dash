@@ -1,85 +1,14 @@
-page_title: LF Builds
+page_title: cf-gha-tracked-workflows
 
 repos:  
-  - repo: asv-formatter
-    owner: lincc-frameworks
-    smoke-test: smoke-test.yml
-    live-build: testing-and-coverage.yml
+  - repo: cardano-graphql
+    owner: cardano-foundation
+    ci-builds: ci.yml
+    post-integration: post-integration.yml
   
-  - repo: hats
-    owner: astronomy-commons
-    smoke-test: smoke-test.yml
-    build-docs: build-documentation.yml
-    benchmarks: asv-nightly.yml
-    live-build: testing-and-coverage.yml
-
-  - repo: hats-cloudtests
-    owner: astronomy-commons
-    smoke-test: smoke-test.yml
-    benchmarks: asv-nightly.yml
-    live-build: testing-and-coverage.yml
-
-  - repo: hats-import
-    owner: astronomy-commons
-    smoke-test: smoke-test.yml
-    build-docs: build-documentation.yml
-    live-build: testing-and-coverage.yml
-
-  - repo: kbmod
-    owner: dirac-institute
-    smoke-test: canary_builds.yaml
-    build-docs: build_docs.yaml
-    live-build: pr_tests.yaml
-  
-  - repo: koffi
-    owner: lincc-frameworks
-    smoke-test: smoke-test.yml
-    live-build: testing-and-coverage.yml
-  
-  - repo: lsdb
-    owner: astronomy-commons
-    smoke-test: smoke-test.yml
-    build-docs: build-documentation.yml
-    benchmarks: asv-nightly.yml
-    live-build: testing-and-coverage.yml
-      
-  - repo: nested-dask
-    owner: lincc-frameworks
-    smoke-test: smoke-test.yml
-    build-docs: build-documentation.yml
-    benchmarks: asv-nightly.yml
-    live-build: testing-and-coverage.yml
-      
-  - repo: nested-pandas
-    owner: lincc-frameworks
-    smoke-test: smoke-test.yml
-    build-docs: build-documentation.yml
-    benchmarks: asv-nightly.yml
-    live-build: testing-and-coverage.yml
-      
-  - repo: python-project-template
-    owner: lincc-frameworks
-    live-build: ci.yml
-    smoke-test: smoke-test.yml
-  
-  - repo: rail
-    owner: lsstdesc
-    smoke-test: smoke-test.yml
-    build-docs: build_documentation.yml
-    live-build: testing-and-coverage.yml
-  
-  - repo: rail_base
-    owner: lsstdesc
-    smoke-test: smoke-test.yml
-    live-build: testing-and-coverage.yml
-  
-  - repo: rail_pipelines
-    owner: lsstdesc
-    smoke-test: smoke-test.yml
-    live-build: testing-and-coverage.yml
-  
-  - repo: tables_io
-    owner: lsstdesc
-    smoke-test: smoke-test.yml
-    live-build: testing-and-coverage.yml
-  
+  - repo: cf-identity-wallet
+    owner: cardano-foundation
+    docker-builds: docker-builds.yml
+    e2e-mobile-tests: e2e-mobile-tests.yml 
+    verify-branch: gh-verify-branch.yml
+    verify-pr: gh-verify-pr.yml
