@@ -19,4 +19,4 @@ jobs:
       - name: Set new build metadata
         id: build-metadata
         run: |
-          echo "$TEST_VAR"
+          echo $TEST_VAR
