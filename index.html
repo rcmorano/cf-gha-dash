@@ -1,786 +1,1121 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>cf-gha-tracked-workflows</title>
-        <link rel="icon" type="image/x-icon" href="img/favicon.png">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="css/styles.css">
-        <script>
-        setTimeout(function(){
-            window.location.reload();
-        }, 60000);
-        </script>
-    </head>
-    <body>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>cf-gha-tracked-workflows</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+    // Auto-reload page every 60 seconds
+    setTimeout(function(){
+        window.location.reload();
+    }, 60000);
+
+    // Toggle collapse/expand for project workflows
+    function toggleProject(projectId) {
+        var content = document.getElementById('workflows-' + projectId);
+        var icon = document.getElementById('icon-' + projectId);
+        
+        if (content.style.display === "none") {
+            content.style.display = "table-row-group";
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+            localStorage.setItem('project-' + projectId, 'expanded');
+        } else {
+            content.style.display = "none";
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+            localStorage.setItem('project-' + projectId, 'collapsed');
+        }
+    }
+
+    // Collapse all projects
+    function collapseAll() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        var icons = document.querySelectorAll('[id^="icon-"]');
+        
+        contents.forEach(function(content) {
+            content.style.display = "none";
+            var projectId = content.id.replace('workflows-', '');
+            localStorage.setItem('project-' + projectId, 'collapsed');
+        });
+        
+        icons.forEach(function(icon) {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+        });
+    }
+
+    // Expand all projects
+    function expandAll() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        var icons = document.querySelectorAll('[id^="icon-"]');
+        
+        contents.forEach(function(content) {
+            content.style.display = "table-row-group";
+            var projectId = content.id.replace('workflows-', '');
+            localStorage.setItem('project-' + projectId, 'expanded');
+        });
+        
+        icons.forEach(function(icon) {
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+        });
+    }
+
+    // Restore collapse state from localStorage on page load
+    window.onload = function() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        contents.forEach(function(content) {
+            var projectId = content.id.replace('workflows-', '');
+            var state = localStorage.getItem('project-' + projectId);
+            var icon = document.getElementById('icon-' + projectId);
+            
+            if (state === 'collapsed') {
+                content.style.display = "none";
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                // Default to expanded
+                content.style.display = "table-row-group";
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            }
+        });
+    };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>cf-gha-tracked-workflows</h1>
+        <div class="controls">
+            <button onclick="expandAll()" class="control-btn">
+                <i class="fa fa-plus-square-o"></i> Expand All
+            </button>
+            <button onclick="collapseAll()" class="control-btn">
+                <i class="fa fa-minus-square-o"></i> Collapse All
+            </button>
+        </div>
+    </div>
+
     <table>
-        <tr>
-            <th colspan="1" scope="colgroup">Repository/workflow</th>
-            <th colspan="1" scope="colgroup">Status</th>
-            <th colspan="1" scope="colgroup">Last run</th>
-        </tr>
-    </tr>
+        <thead>
+            <tr>
+                <th colspan="1" scope="colgroup">Repository/Workflow</th>
+                <th colspan="1" scope="colgroup">Status</th>
+                <th colspan="1" scope="colgroup">Last Run</th>
+            </tr>
+        </thead>
 
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cardano-devkit">cardano-devkit</a>
+        
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cardano-devkit')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-devkit')">
+                <td class="project-name">
+                    <i id="icon-cardano-devkit" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cardano-devkit" onclick="event.stopPropagation();">
+                        <strong>cardano-devkit</strong>
+                    </a>
+                    <span class="workflow-count">(3 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 2</span>
+                    
+                    
+                        <span class="status-badge failure-badge">✗ 1</span>
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">create-release </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-devkit/actions/workflows/release.yml">
-                      05:02<br>12/17/24
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cardano-devkit" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">create-release</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-devkit/actions/workflows/release.yml">
+                        15:45<br>01/21/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">run-tests</td>
+                <td class="red-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">failure</span>
+                    <i class="fa fa-times-circle"></i>
+                </td>
+                <td class="red-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-devkit/actions/workflows/test.yml">
+                        08:52<br>03/27/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">ship-release-artifacts</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-devkit/actions/workflows/publish.yml">
+                        14:32<br>01/21/26
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">run-tests </td>
-              <td class="red-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-devkit/actions/workflows/test.yml">
-                      08:52<br>03/27/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">ship-release-artifacts </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-devkit/actions/workflows/publish.yml">
-                      04:09<br>12/17/24
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cardano-graphql">cardano-graphql</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cardano-graphql')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-graphql')">
+                <td class="project-name">
+                    <i id="icon-cardano-graphql" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cardano-graphql" onclick="event.stopPropagation();">
+                        <strong>cardano-graphql</strong>
+                    </a>
+                    <span class="workflow-count">(2 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 2</span>
+                    
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">post-integration </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-graphql/actions/workflows/post_integration.yml">
-                      05:27<br>05/07/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cardano-graphql" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">post-integration</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-graphql/actions/workflows/post_integration.yml">
+                        09:01<br>12/15/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">ci</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-graphql/actions/workflows/ci.yml">
+                        20:49<br>01/31/26
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">ci </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-graphql/actions/workflows/ci.yml">
-                      07:13<br>05/07/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cardano-rosetta">cardano-rosetta</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cardano-rosetta')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-rosetta')">
+                <td class="project-name">
+                    <i id="icon-cardano-rosetta" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta" onclick="event.stopPropagation();">
+                        <strong>cardano-rosetta</strong>
+                    </a>
+                    <span class="workflow-count">(6 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 4</span>
+                    
+                    
+                    
+                        <span class="status-badge pending-badge">? 2</span>
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">api-test </td>
-              <td class="yellow-cell align-center">
-                  404
-                  <i class="fa fa-question-circle"></i>
-              </td>
-              <td class="yellow-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/api-test.yml">
-                      
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cardano-rosetta" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">api-test</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">404</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/api-test.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">ci</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/ci.yml">
+                        07:12<br>04/04/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">nightly</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/nightly.yml">
+                        22:24<br>06/13/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">post-integration</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/post_integration.yml">
+                        10:35<br>04/04/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">post-release</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/post_release.yml">
+                        07:54<br>04/09/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">pre-release</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">not yet run</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/pre_release.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">ci </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/ci.yml">
-                      07:12<br>04/04/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">nightly </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/nightly.yml">
-                      22:29<br>05/22/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">post-integration </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/post_integration.yml">
-                      10:35<br>04/04/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">post-release </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/post_release.yml">
-                      07:54<br>04/09/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">pre-release </td>
-              <td class="yellow-cell align-center">
-                  not yet run
-                  <i class="fa fa-question-circle"></i>
-              </td>
-              <td class="yellow-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta/actions/workflows/pre_release.yml">
-                      
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cardano-rosetta-java">cardano-rosetta-java</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cardano-rosetta-java')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-rosetta-java')">
+                <td class="project-name">
+                    <i id="icon-cardano-rosetta-java" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java" onclick="event.stopPropagation();">
+                        <strong>cardano-rosetta-java</strong>
+                    </a>
+                    <span class="workflow-count">(8 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 4</span>
+                    
+                    
+                        <span class="status-badge failure-badge">✗ 2</span>
+                    
+                    
+                        <span class="status-badge pending-badge">? 2</span>
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">bump-version </td>
-              <td class="red-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/bump-version.yaml">
-                      06:53<br>11/08/24
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cardano-rosetta-java" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">bump-version</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">404</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/bump-version.yaml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">build-docker-file</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">404</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/docker-build.yaml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">build-main-branch</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/main.yaml">
+                        07:28<br>02/05/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">build-release</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/release.yaml">
+                        12:27<br>02/04/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">feature-branch</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/feature-mvn-build.yaml">
+                        09:13<br>02/06/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">fossa-scan</td>
+                <td class="red-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">failure</span>
+                    <i class="fa fa-times-circle"></i>
+                </td>
+                <td class="red-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/fossa-scan.yaml">
+                        15:21<br>04/29/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">integration-test</td>
+                <td class="red-cell align-center">
+                    <span class="status-text">failure</span>
+                    <i class="fa fa-times-circle"></i>
+                </td>
+                <td class="red-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/integration-test.yaml">
+                        09:18<br>02/06/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">sonar-cloud-report</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/sonar-cloud-report.yml">
+                        04:34<br>07/25/25
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">build-docker-file </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/docker-build.yaml">
-                      14:36<br>05/13/24
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">build-main-branch </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/main.yaml">
-                      08:14<br>05/22/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">build-release </td>
-              <td class="red-cell align-center">
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/release.yaml">
-                      07:33<br>05/22/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">feature-branch </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/feature-mvn-build.yaml">
-                      23:01<br>05/22/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">fossa-scan </td>
-              <td class="red-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/fossa-scan.yaml">
-                      15:21<br>04/29/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">integration-test </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/integration-test.yaml">
-                      23:05<br>05/22/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">sonar-cloud-report </td>
-              <td class="red-cell align-center">
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-rosetta-java/actions/workflows/sonar-cloud-report.yml">
-                      23:01<br>05/22/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cardano-token-registry">cardano-token-registry</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cardano-token-registry')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-token-registry')">
+                <td class="project-name">
+                    <i id="icon-cardano-token-registry" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cardano-token-registry" onclick="event.stopPropagation();">
+                        <strong>cardano-token-registry</strong>
+                    </a>
+                    <span class="workflow-count">(1 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 1</span>
+                    
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">ci </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-token-registry/actions/workflows/ci.yaml">
-                      03:06<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cardano-token-registry" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">ci</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-token-registry/actions/workflows/ci.yaml">
+                        13:07<br>02/04/26
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cardano-wallet">cardano-wallet</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cardano-wallet')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-wallet')">
+                <td class="project-name">
+                    <i id="icon-cardano-wallet" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cardano-wallet" onclick="event.stopPropagation();">
+                        <strong>cardano-wallet</strong>
+                    </a>
+                    <span class="workflow-count">(6 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge failure-badge">✗ 2</span>
+                    
+                    
+                        <span class="status-badge pending-badge">? 4</span>
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">auto-approve-docs </td>
-              <td class="yellow-cell align-center">
-                  cancelled
-                  <i class="fa fa-question-circle"></i>
-              </td>
-              <td class="yellow-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/approve-docs.yml">
-                      07:54<br>05/19/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cardano-wallet" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">auto-approve-docs</td>
+                <td class="yellow-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">cancelled</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/approve-docs.yml">
+                        03:59<br>12/17/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">ci</td>
+                <td class="red-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">failure</span>
+                    <i class="fa fa-times-circle"></i>
+                </td>
+                <td class="red-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/haskell.yml">
+                        20:46<br>01/15/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">delete-old-workflow-runs</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">not yet run</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/cleanup.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">lean</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">not yet run</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/lean.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">publish-docs</td>
+                <td class="yellow-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">cancelled</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/publish.yml">
+                        03:59<br>12/17/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">rubocop</td>
+                <td class="red-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">failure</span>
+                    <i class="fa fa-times-circle"></i>
+                </td>
+                <td class="red-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/rubocop.yml">
+                        09:16<br>02/27/25
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">ci </td>
-              <td class="red-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/haskell.yml">
-                      03:29<br>12/11/24
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">delete-old-workflow-runs </td>
-              <td class="yellow-cell align-center">
-                  not yet run
-                  <i class="fa fa-question-circle"></i>
-              </td>
-              <td class="yellow-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/cleanup.yml">
-                      
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">lean </td>
-              <td class="yellow-cell align-center">
-                  not yet run
-                  <i class="fa fa-question-circle"></i>
-              </td>
-              <td class="yellow-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/lean.yml">
-                      
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">publish-docs </td>
-              <td class="yellow-cell align-center">
-                  cancelled
-                  <i class="fa fa-question-circle"></i>
-              </td>
-              <td class="yellow-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/publish.yml">
-                      07:54<br>05/19/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">rubocop </td>
-              <td class="red-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cardano-wallet/actions/workflows/rubocop.yml">
-                      09:16<br>02/27/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cf-explorer-landing">cf-explorer-landing</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cf-explorer-landing')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-explorer-landing')">
+                <td class="project-name">
+                    <i id="icon-cf-explorer-landing" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cf-explorer-landing" onclick="event.stopPropagation();">
+                        <strong>cf-explorer-landing</strong>
+                    </a>
+                    <span class="workflow-count">(1 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 1</span>
+                    
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">vercel-deploy </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-explorer-landing/actions/workflows/gh-vercel-deploy.yaml">
-                      02:23<br>04/28/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cf-explorer-landing" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">vercel-deploy</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-explorer-landing/actions/workflows/gh-vercel-deploy.yaml">
+                        08:47<br>01/20/26
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cf-helm-charts">cf-helm-charts</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cf-helm-charts')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-helm-charts')">
+                <td class="project-name">
+                    <i id="icon-cf-helm-charts" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cf-helm-charts" onclick="event.stopPropagation();">
+                        <strong>cf-helm-charts</strong>
+                    </a>
+                    <span class="workflow-count">(1 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 1</span>
+                    
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">release-charts </td>
-              <td class="red-cell align-center">
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-helm-charts/actions/workflows/release.yml">
-                      06:58<br>05/08/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cf-helm-charts" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">release-charts</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-helm-charts/actions/workflows/release.yml">
+                        08:15<br>01/29/26
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cf-ledger-sync">cf-ledger-sync</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cf-ledger-sync')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-ledger-sync')">
+                <td class="project-name">
+                    <i id="icon-cf-ledger-sync" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cf-ledger-sync" onclick="event.stopPropagation();">
+                        <strong>cf-ledger-sync</strong>
+                    </a>
+                    <span class="workflow-count">(5 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 4</span>
+                    
+                    
+                    
+                        <span class="status-badge pending-badge">? 1</span>
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">build </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/build.yml">
-                      01:52<br>01/10/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cf-ledger-sync" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">build</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/build.yml">
+                        01:52<br>01/10/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">codeql</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/codeql.yml">
+                        03:40<br>03/17/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">docs-deploy</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">not yet run</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/docs-deploy.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">publish-artifacts-and-create-release</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/publish.yaml">
+                        03:17<br>01/13/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">test-docs-deploy</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/docs-test-deploy.yml">
+                        00:59<br>01/10/25
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">codeql </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/codeql.yml">
-                      03:40<br>03/17/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">docs-deploy </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/docs-deploy.yml">
-                      04:27<br>10/21/24
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">publish-artifacts-and-create-release </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/publish.yaml">
-                      03:17<br>01/13/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">test-docs-deploy </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-ledger-sync/actions/workflows/docs-test-deploy.yml">
-                      00:59<br>01/10/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cf-identity-wallet">cf-identity-wallet</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cf-identity-wallet')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-identity-wallet')">
+                <td class="project-name">
+                    <i id="icon-cf-identity-wallet" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cf-identity-wallet" onclick="event.stopPropagation();">
+                        <strong>cf-identity-wallet</strong>
+                    </a>
+                    <span class="workflow-count">(4 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 2</span>
+                    
+                    
+                        <span class="status-badge failure-badge">✗ 1</span>
+                    
+                    
+                        <span class="status-badge pending-badge">? 1</span>
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">docker-builds </td>
-              <td class="red-cell align-center">
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/docker-builds.yaml">
-                      05:51<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cf-identity-wallet" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">docker-builds</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/docker-builds.yaml">
+                        07:44<br>09/24/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">e2e-mobile-tests</td>
+                <td class="yellow-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">cancelled</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/e2e_mobile_tests.yaml">
+                        05:28<br>06/09/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">verify-branch</td>
+                <td class="green-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/gh-verify-branch.yaml">
+                        06:00<br>09/15/25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">verify-pr</td>
+                <td class="red-cell align-center">
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    <span class="status-text">failure</span>
+                    <i class="fa fa-times-circle"></i>
+                </td>
+                <td class="red-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/gh-verify-pr.yaml">
+                        00:12<br>09/17/25
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">e2e-mobile-tests </td>
-              <td class="red-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/e2e_mobile_tests.yaml">
-                      10:09<br>01/24/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">verify-branch </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/gh-verify-branch.yaml">
-                      06:02<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">verify-pr </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-identity-wallet/actions/workflows/gh-verify-pr.yaml">
-                      05:45<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/cf-lob-platform">cf-lob-platform</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('cf-lob-platform')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-lob-platform')">
+                <td class="project-name">
+                    <i id="icon-cf-lob-platform" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/cf-lob-platform" onclick="event.stopPropagation();">
+                        <strong>cf-lob-platform</strong>
+                    </a>
+                    <span class="workflow-count">(2 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 2</span>
+                    
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">build </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-lob-platform/actions/workflows/build.yml">
-                      04:48<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-cf-lob-platform" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">build</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-lob-platform/actions/workflows/build.yml">
+                        11:27<br>02/06/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">run-tests</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/cf-lob-platform/actions/workflows/build-with-tests.yaml">
+                        12:03<br>02/06/26
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">run-tests </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/cf-lob-platform/actions/workflows/build-with-tests.yaml">
-                      05:06<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/developer-portal">developer-portal</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('developer-portal')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('developer-portal')">
+                <td class="project-name">
+                    <i id="icon-developer-portal" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/developer-portal" onclick="event.stopPropagation();">
+                        <strong>developer-portal</strong>
+                    </a>
+                    <span class="workflow-count">(2 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 2</span>
+                    
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">codeql </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/developer-portal/actions/workflows/codeql-analysis.yml">
-                      05:28<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-developer-portal" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">codeql</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/developer-portal/actions/workflows/codeql-analysis.yml">
+                        11:56<br>02/06/26
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">yarn-build</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/cardano-foundation/developer-portal/actions/workflows/yarn-build.yml">
+                        11:55<br>02/06/26
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">yarn-build </td>
-              <td class="green-cell align-center">
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/developer-portal/actions/workflows/yarn-build.yml">
-                      05:27<br>05/23/25
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
-    <tr>
-        <td><a href="https://github.com/cardano-foundation/merkle-tree-java">merkle-tree-java</a>
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('merkle-tree-java')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('merkle-tree-java')">
+                <td class="project-name">
+                    <i id="icon-merkle-tree-java" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="https://github.com/cardano-foundation/merkle-tree-java" onclick="event.stopPropagation();">
+                        <strong>merkle-tree-java</strong>
+                    </a>
+                    <span class="workflow-count">(3 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge pending-badge">? 3</span>
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          
-          <tr>
-              <td class="indented">build </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/merkle-tree-java/actions/workflows/build.yml">
-                      13:57<br>11/23/24
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-merkle-tree-java" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">build</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">not yet run</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/merkle-tree-java/actions/workflows/build.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">codeql</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">not yet run</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/merkle-tree-java/actions/workflows/codeql.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">create-release</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">not yet run</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/cardano-foundation/merkle-tree-java/actions/workflows/maven-release.yml">
+                        
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
         
-          <tr>
-              <td class="indented">codeql </td>
-              <td class="green-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  success
-                  <i class="fa fa-check-circle"></i>
-              </td>
-              <td class="green-cell align-center">
-                  <a href="https://github.com/cardano-foundation/merkle-tree-java/actions/workflows/codeql.yml">
-                      13:55<br>11/23/24
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-          <tr>
-              <td class="indented">create-release </td>
-              <td class="red-cell align-center">
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  failure
-                  <i class="fa fa-times-circle"></i>
-              </td>
-              <td class="red-cell align-center">
-                  <a href="https://github.com/cardano-foundation/merkle-tree-java/actions/workflows/maven-release.yml">
-                      13:54<br>11/23/24
-                  </a>
-              </td>
-          </tr>
-        </td>
-        
-    </tr>
-    
     </table>
 
-    <p>
-        Last Updated 06:08 May 23, 2025 (US-NYC) | 
-        <a href='https://github.com/lincc-frameworks/lf-workflow-dash'><i class=\"fa fa-github\"></i> lf-workflow-dash</a>
+    <p class="footer">
+        Last Updated 16:03 February 06, 2026 (US-NYC) | 
+        <a href='https://github.com/lincc-frameworks/lf-workflow-dash'><i class="fa fa-github"></i> lf-workflow-dash</a>
     </p>
 
-    </body>
+</body>
 </html>
