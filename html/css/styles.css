@@ -184,8 +184,8 @@ thead th {
   border-bottom: 1px solid #21262d;
 }
 
-.workflow-name {
-  padding-left: 45px !important;
+.workflow-row .workflow-name {
+  padding-left: 45px;
   color: #c9d1d9;
   font-size: 0.95em;
 }
@@ -302,8 +302,8 @@ td.green-cell i {
     font-size: 0.8em;
   }
   
-  .workflow-name {
-    padding-left: 30px !important;
+  .workflow-row .workflow-name {
+    padding-left: 30px;
   }
   
   .control-btn {

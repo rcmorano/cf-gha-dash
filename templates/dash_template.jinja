@@ -111,9 +111,9 @@
         {% for project in all_projects %}
         <tbody class="project-group">
             <!-- Project Header Row -->
-            <tr class="project-header" onclick="toggleProject({{loop.index}})">
+            <tr class="project-header" onclick="toggleProject('{{project.repo}}')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('{{project.repo}}')">
                 <td class="project-name">
-                    <i id="icon-{{loop.index}}" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-{{project.repo}}" class="fa fa-chevron-down toggle-icon"></i>
                     <a href="{{project.repo_url}}" onclick="event.stopPropagation();">
                         <strong>{{project.repo}}</strong>
                     </a>
@@ -139,7 +139,7 @@
         </tbody>
 
         <!-- Workflow Rows (Collapsible) -->
-        <tbody id="workflows-{{loop.index}}" class="workflows-content">
+        <tbody id="workflows-{{project.repo}}" class="workflows-content">
             {% for workflow in project.other_workflows %}
             <tr class="workflow-row">
                 <td class="workflow-name">{{workflow.lf_workflow_name}}</td>
