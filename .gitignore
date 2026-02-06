@@ -148,3 +148,8 @@ _html/
 
 # Project initialization script
 .initialize_new_project.sh
+
+# Example dashboard files (for demonstration)
+example_dashboard.html
+generate_example.py
+html/example_dashboard.html

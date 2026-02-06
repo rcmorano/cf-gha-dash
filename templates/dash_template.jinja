@@ -1,58 +1,170 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>{{page_title}}</title>
-        <link rel="icon" type="image/x-icon" href="img/favicon.png">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="css/styles.css">
-        <script>
-        setTimeout(function(){
-            window.location.reload();
-        }, 60000);
-        </script>
-    </head>
-    <body>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{page_title}}</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+    // Auto-reload page every 60 seconds
+    setTimeout(function(){
+        window.location.reload();
+    }, 60000);
+
+    // Toggle collapse/expand for project workflows
+    function toggleProject(projectId) {
+        var content = document.getElementById('workflows-' + projectId);
+        var icon = document.getElementById('icon-' + projectId);
+        
+        if (content.style.display === "none") {
+            content.style.display = "table-row-group";
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+            localStorage.setItem('project-' + projectId, 'expanded');
+        } else {
+            content.style.display = "none";
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+            localStorage.setItem('project-' + projectId, 'collapsed');
+        }
+    }
+
+    // Collapse all projects
+    function collapseAll() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        var icons = document.querySelectorAll('[id^="icon-"]');
+        
+        contents.forEach(function(content) {
+            content.style.display = "none";
+            var projectId = content.id.replace('workflows-', '');
+            localStorage.setItem('project-' + projectId, 'collapsed');
+        });
+        
+        icons.forEach(function(icon) {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+        });
+    }
+
+    // Expand all projects
+    function expandAll() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        var icons = document.querySelectorAll('[id^="icon-"]');
+        
+        contents.forEach(function(content) {
+            content.style.display = "table-row-group";
+            var projectId = content.id.replace('workflows-', '');
+            localStorage.setItem('project-' + projectId, 'expanded');
+        });
+        
+        icons.forEach(function(icon) {
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+        });
+    }
+
+    // Restore collapse state from localStorage on page load
+    window.onload = function() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        contents.forEach(function(content) {
+            var projectId = content.id.replace('workflows-', '');
+            var state = localStorage.getItem('project-' + projectId);
+            var icon = document.getElementById('icon-' + projectId);
+            
+            if (state === 'collapsed') {
+                content.style.display = "none";
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                // Default to expanded
+                content.style.display = "table-row-group";
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            }
+        });
+    };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>{{page_title}}</h1>
+        <div class="controls">
+            <button onclick="expandAll()" class="control-btn">
+                <i class="fa fa-plus-square-o"></i> Expand All
+            </button>
+            <button onclick="collapseAll()" class="control-btn">
+                <i class="fa fa-minus-square-o"></i> Collapse All
+            </button>
+        </div>
+    </div>
+
     <table>
-        <tr>
-            <th colspan="1" scope="colgroup">Repository/workflow</th>
-            <th colspan="1" scope="colgroup">Status</th>
-            <th colspan="1" scope="colgroup">Last run</th>
-        </tr>
-    </tr>
+        <thead>
+            <tr>
+                <th colspan="1" scope="colgroup">Repository/Workflow</th>
+                <th colspan="1" scope="colgroup">Status</th>
+                <th colspan="1" scope="colgroup">Last Run</th>
+            </tr>
+        </thead>
 
-    {% for project in all_projects %}
-    <tr>
-        <td><a href="{{project.repo_url}}">{{project.repo}}</a>
+        {% for project in all_projects %}
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject({{loop.index}})">
+                <td class="project-name">
+                    <i id="icon-{{loop.index}}" class="fa fa-chevron-down toggle-icon"></i>
+                    <a href="{{project.repo_url}}" onclick="event.stopPropagation();">
+                        <strong>{{project.repo}}</strong>
+                    </a>
+                    <span class="workflow-count">({{project.other_workflows|length}} workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    {% set success_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length %}
+                    {% set failure_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length %}
+                    {% set pending_count = project.other_workflows|length - success_count - failure_count %}
+                    
+                    {% if success_count > 0 %}
+                        <span class="status-badge success-badge">✓ {{success_count}}</span>
+                    {% endif %}
+                    {% if failure_count > 0 %}
+                        <span class="status-badge failure-badge">✗ {{failure_count}}</span>
+                    {% endif %}
+                    {% if pending_count > 0 %}
+                        <span class="status-badge pending-badge">? {{pending_count}}</span>
+                    {% endif %}
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
 
-          <!-- Other -->
-          {% for workflow in project.other_workflows %}
-          <tr>
-              <td class="indented">{{workflow.lf_workflow_name}} </td>
-              <td class="{{workflow.display_class}} align-center">
-                  {%- if workflow.is_stale %}
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  {%- endif %}
-                  {{workflow.workflow_status}}
-                  <i class="{{workflow.icon_class}}"></i>
-              </td>
-              <td class="{{workflow.display_class}} align-center">
-                  <a href="{{workflow.workflow_url}}">
-                      {{workflow.conclusion_time}}
-                  </a>
-              </td>
-          </tr>
-        </td>
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-{{loop.index}}" class="workflows-content">
+            {% for workflow in project.other_workflows %}
+            <tr class="workflow-row">
+                <td class="workflow-name">{{workflow.lf_workflow_name}}</td>
+                <td class="{{workflow.display_class}} align-center">
+                    {%- if workflow.is_stale %}
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    {%- endif %}
+                    <span class="status-text">{{workflow.workflow_status}}</span>
+                    <i class="{{workflow.icon_class}}"></i>
+                </td>
+                <td class="{{workflow.display_class}} align-center">
+                    <a href="{{workflow.workflow_url}}">
+                        {{workflow.conclusion_time}}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
         {% endfor %}
-    </tr>
-    {% endfor %}
     </table>
 
-    <p>
+    <p class="footer">
         Last Updated {{last_updated}} | 
-        <a href='https://github.com/lincc-frameworks/{{dash_repo}}'><i class=\"fa fa-github\"></i> {{dash_repo}}</a>
+        <a href='https://github.com/lincc-frameworks/{{dash_repo}}'><i class="fa fa-github"></i> {{dash_repo}}</a>
     </p>
 
-    </body>
+</body>
 </html>
