@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>{{page_title}}</title>
+    <title>Test GitHub Actions Dashboard</title>
     <link rel="icon" type="image/x-icon" href="img/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/styles.css">
@@ -211,7 +211,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{page_title}}</h1>
+        <h1>Test GitHub Actions Dashboard</h1>
         <div class="controls">
             <button onclick="expandAll()" class="control-btn">
                 <i class="fa fa-plus-square-o"></i> Expand All
@@ -224,42 +224,52 @@
 
     <!-- Statistics Panel -->
     <div class="stats-panel">
-        {% set total_workflows = namespace(count=0) %}
-        {% set total_success = namespace(count=0) %}
-        {% set total_failure = namespace(count=0) %}
-        {% set total_pending = namespace(count=0) %}
-        {% set total_stale = namespace(count=0) %}
         
-        {% for project in all_projects %}
-            {% set total_workflows.count = total_workflows.count + project.other_workflows|length %}
-            {% set total_success.count = total_success.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length) %}
-            {% set total_failure.count = total_failure.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length) %}
-            {% set total_stale.count = total_stale.count + (project.other_workflows|selectattr('is_stale', 'equalto', true)|list|length) %}
-        {% endfor %}
-        {% set total_pending.count = total_workflows.count - total_success.count - total_failure.count %}
+        
+        
+        
+        
+        
+        
+            
+            
+            
+            
+        
+            
+            
+            
+            
+        
+            
+            
+            
+            
+        
+        
         
         <div class="stat-card">
-            <div class="stat-number">{{all_projects|length}}</div>
+            <div class="stat-number">3</div>
             <div class="stat-label">Projects</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">{{total_workflows.count}}</div>
+            <div class="stat-number">7</div>
             <div class="stat-label">Workflows</div>
         </div>
         <div class="stat-card success-stat clickable" onclick="applyStatusFilter('success')" title="Click to filter projects with successes">
-            <div class="stat-number">{{total_success.count}}</div>
+            <div class="stat-number">5</div>
             <div class="stat-label">Success</div>
         </div>
         <div class="stat-card failure-stat clickable" onclick="applyStatusFilter('failure')" title="Click to filter projects with failures">
-            <div class="stat-number">{{total_failure.count}}</div>
+            <div class="stat-number">1</div>
             <div class="stat-label">Failures</div>
         </div>
         <div class="stat-card pending-stat clickable" onclick="applyStatusFilter('pending')" title="Click to filter projects with pending workflows">
-            <div class="stat-number">{{total_pending.count}}</div>
+            <div class="stat-number">1</div>
             <div class="stat-label">Pending</div>
         </div>
         <div class="stat-card stale-stat">
-            <div class="stat-number">{{total_stale.count}}</div>
+            <div class="stat-number">0</div>
             <div class="stat-label">Stale</div>
         </div>
     </div>
@@ -306,7 +316,7 @@
         </button>
         
         <div class="filter-results" id="filterResults">
-            {{all_projects|length}} of {{all_projects|length}} projects
+            3 of 3 projects
         </div>
     </div>
 
@@ -319,62 +329,197 @@
             </tr>
         </thead>
 
-        {% for project in all_projects %}
+        
         <tbody class="project-group">
             <!-- Project Header Row -->
-            <tr class="project-header" onclick="toggleProject('{{project.repo}}')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('{{project.repo}}')">
+            <tr class="project-header" onclick="toggleProject('project-a')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('project-a')">
                 <td class="project-name">
-                    <i id="icon-{{project.repo}}" class="fa fa-chevron-right toggle-icon"></i>
-                    <a href="{{project.repo_url}}" onclick="event.stopPropagation();">
-                        <strong>{{project.repo}}</strong>
+                    <i id="icon-project-a" class="fa fa-chevron-right toggle-icon"></i>
+                    <a href="https://github.com/org/project-a" onclick="event.stopPropagation();">
+                        <strong>project-a</strong>
                     </a>
-                    <span class="workflow-count">({{project.other_workflows|length}} workflows)</span>
+                    <span class="workflow-count">(2 workflows)</span>
                 </td>
                 <td class="project-summary align-center">
-                    {% set success_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length %}
-                    {% set failure_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length %}
-                    {% set pending_count = project.other_workflows|length - success_count - failure_count %}
                     
-                    {% if success_count > 0 %}
-                        <span class="status-badge success-badge">✓ {{success_count}}</span>
-                    {% endif %}
-                    {% if failure_count > 0 %}
-                        <span class="status-badge failure-badge">✗ {{failure_count}}</span>
-                    {% endif %}
-                    {% if pending_count > 0 %}
-                        <span class="status-badge pending-badge">? {{pending_count}}</span>
-                    {% endif %}
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 2</span>
+                    
+                    
+                    
                 </td>
                 <td></td>
             </tr>
         </tbody>
 
         <!-- Workflow Rows (Collapsible) -->
-        <tbody id="workflows-{{project.repo}}" class="workflows-content">
-            {% for workflow in project.other_workflows %}
+        <tbody id="workflows-project-a" class="workflows-content">
+            
             <tr class="workflow-row">
-                <td class="workflow-name">{{workflow.lf_workflow_name}}</td>
-                <td class="{{workflow.display_class}} align-center">
-                    {%- if workflow.is_stale %}
-                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
-                    {%- endif %}
-                    <span class="status-text">{{workflow.workflow_status}}</span>
-                    <i class="{{workflow.icon_class}}"></i>
+                <td class="workflow-name">ci</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
                 </td>
-                <td class="{{workflow.display_class}} align-center">
-                    <a href="{{workflow.workflow_url}}">
-                        {{workflow.conclusion_time}}
+                <td class="green-cell align-center">
+                    <a href="https://github.com/example/repo/actions/workflows/ci.yml">
+                        02/06 19:25
                     </a>
                 </td>
             </tr>
-            {% endfor %}
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">build</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/example/repo/actions/workflows/build.yml">
+                        02/06 18:25
+                    </a>
+                </td>
+            </tr>
+            
         </tbody>
-        {% endfor %}
+        
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('project-b')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('project-b')">
+                <td class="project-name">
+                    <i id="icon-project-b" class="fa fa-chevron-right toggle-icon"></i>
+                    <a href="https://github.com/org/project-b" onclick="event.stopPropagation();">
+                        <strong>project-b</strong>
+                    </a>
+                    <span class="workflow-count">(2 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 1</span>
+                    
+                    
+                        <span class="status-badge failure-badge">✗ 1</span>
+                    
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
+
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-project-b" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">test</td>
+                <td class="red-cell align-center">
+                    <span class="status-text">failure</span>
+                    <i class="fa fa-times-circle"></i>
+                </td>
+                <td class="red-cell align-center">
+                    <a href="https://github.com/example/repo/actions/workflows/test.yml">
+                        02/06 20:25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">deploy</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/example/repo/actions/workflows/deploy.yml">
+                        02/06 17:25
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
+        
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('project-c')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('project-c')">
+                <td class="project-name">
+                    <i id="icon-project-c" class="fa fa-chevron-right toggle-icon"></i>
+                    <a href="https://github.com/org/project-c" onclick="event.stopPropagation();">
+                        <strong>project-c</strong>
+                    </a>
+                    <span class="workflow-count">(3 workflows)</span>
+                </td>
+                <td class="project-summary align-center">
+                    
+                    
+                    
+                    
+                    
+                        <span class="status-badge success-badge">✓ 2</span>
+                    
+                    
+                    
+                        <span class="status-badge pending-badge">? 1</span>
+                    
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
+
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-project-c" class="workflows-content">
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">lint</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/example/repo/actions/workflows/lint.yml">
+                        02/06 16:25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">security</td>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">pending</span>
+                    <i class="fa fa-question-circle"></i>
+                </td>
+                <td class="yellow-cell align-center">
+                    <a href="https://github.com/example/repo/actions/workflows/security.yml">
+                        02/06 09:25
+                    </a>
+                </td>
+            </tr>
+            
+            <tr class="workflow-row">
+                <td class="workflow-name">docs</td>
+                <td class="green-cell align-center">
+                    <span class="status-text">success</span>
+                    <i class="fa fa-check-circle"></i>
+                </td>
+                <td class="green-cell align-center">
+                    <a href="https://github.com/example/repo/actions/workflows/docs.yml">
+                        02/05 21:25
+                    </a>
+                </td>
+            </tr>
+            
+        </tbody>
+        
     </table>
 
     <p class="footer">
-        Last Updated {{last_updated}} | 
-        <a href='https://github.com/lincc-frameworks/{{dash_repo}}'><i class="fa fa-github"></i> {{dash_repo}}</a>
+        Last Updated 16:25 February 06, 2026 (US-NYC) | 
+        <a href='https://github.com/lincc-frameworks/cf-gha-dash'><i class="fa fa-github"></i> cf-gha-dash</a>
     </p>
 
 </body>

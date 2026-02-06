@@ -82,9 +82,22 @@ body {
   transition: all 0.2s ease;
 }
 
+.stat-card.clickable {
+  cursor: pointer;
+}
+
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card.clickable:hover {
+  border-color: #58a6ff;
+  box-shadow: 0 4px 16px rgba(88, 166, 255, 0.3);
+}
+
+.stat-card.clickable:active {
+  transform: translateY(0);
 }
 
 .stat-number {
