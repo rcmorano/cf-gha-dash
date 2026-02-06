@@ -64,8 +64,117 @@
         });
     }
 
-    // Restore collapse state from localStorage on page load
+    // Filter projects by search term
+    function filterProjects() {
+        var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        var statusFilter = document.getElementById('statusFilter').value;
+        var projectGroups = document.querySelectorAll('.project-group');
+        
+        var visibleCount = 0;
+        projectGroups.forEach(function(group) {
+            var projectName = group.querySelector('.project-name strong').textContent.toLowerCase();
+            var statusBadges = group.querySelector('.project-summary');
+            
+            // Check search term match
+            var matchesSearch = projectName.includes(searchTerm);
+            
+            // Check status filter match
+            var matchesStatus = true;
+            if (statusFilter !== 'all') {
+                var hasSuccess = statusBadges.querySelector('.success-badge') !== null;
+                var hasFailure = statusBadges.querySelector('.failure-badge') !== null;
+                var hasPending = statusBadges.querySelector('.pending-badge') !== null;
+                
+                if (statusFilter === 'success' && !hasSuccess) matchesStatus = false;
+                if (statusFilter === 'failure' && !hasFailure) matchesStatus = false;
+                if (statusFilter === 'pending' && !hasPending) matchesStatus = false;
+                if (statusFilter === 'healthy' && hasFailure) matchesStatus = false;
+            }
+            
+            // Get corresponding workflows tbody
+            var projectHeader = group.querySelector('.project-header');
+            var projectId = projectHeader.getAttribute('onclick').match(/'([^']+)'/)[1];
+            var workflowsBody = document.getElementById('workflows-' + projectId);
+            
+            if (matchesSearch && matchesStatus) {
+                group.style.display = 'table-row-group';
+                if (workflowsBody) workflowsBody.style.display = 'table-row-group';
+                visibleCount++;
+            } else {
+                group.style.display = 'none';
+                if (workflowsBody) workflowsBody.style.display = 'none';
+            }
+        });
+        
+        // Update filter results count
+        var totalCount = projectGroups.length;
+        document.getElementById('filterResults').textContent = 
+            visibleCount + ' of ' + totalCount + ' projects';
+        
+        // Save filter state
+        localStorage.setItem('searchFilter', searchTerm);
+        localStorage.setItem('statusFilter', statusFilter);
+    }
+
+    // Clear all filters
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('statusFilter').value = 'all';
+        localStorage.removeItem('searchFilter');
+        localStorage.removeItem('statusFilter');
+        filterProjects();
+    }
+
+    // Sort projects
+    function sortProjects(criteria) {
+        var table = document.querySelector('table');
+        var projectGroups = Array.from(document.querySelectorAll('.project-group'));
+        var workflowBodies = {};
+        
+        // Store workflow bodies
+        projectGroups.forEach(function(group) {
+            var projectHeader = group.querySelector('.project-header');
+            var projectId = projectHeader.getAttribute('onclick').match(/'([^']+)'/)[1];
+            var workflowsBody = document.getElementById('workflows-' + projectId);
+            if (workflowsBody) {
+                workflowBodies[projectId] = workflowsBody;
+            }
+        });
+        
+        // Sort based on criteria
+        projectGroups.sort(function(a, b) {
+            if (criteria === 'name') {
+                var nameA = a.querySelector('.project-name strong').textContent;
+                var nameB = b.querySelector('.project-name strong').textContent;
+                return nameA.localeCompare(nameB);
+            } else if (criteria === 'name-desc') {
+                var nameA = a.querySelector('.project-name strong').textContent;
+                var nameB = b.querySelector('.project-name strong').textContent;
+                return nameB.localeCompare(nameA);
+            } else if (criteria === 'failures') {
+                var failuresA = a.querySelector('.failure-badge') ? 
+                    parseInt(a.querySelector('.failure-badge').textContent.match(/\d+/)[0]) : 0;
+                var failuresB = b.querySelector('.failure-badge') ? 
+                    parseInt(b.querySelector('.failure-badge').textContent.match(/\d+/)[0]) : 0;
+                return failuresB - failuresA;
+            }
+        });
+        
+        // Re-insert in sorted order
+        var thead = table.querySelector('thead');
+        projectGroups.forEach(function(group) {
+            table.appendChild(group);
+            var projectHeader = group.querySelector('.project-header');
+            var projectId = projectHeader.getAttribute('onclick').match(/'([^']+)'/)[1];
+            if (workflowBodies[projectId]) {
+                table.appendChild(workflowBodies[projectId]);
+            }
+        });
+    }
+
+    // Restore collapse state and filters from localStorage on page load
     window.onload = function() {
+        // Restore collapse state
         var contents = document.querySelectorAll('[id^="workflows-"]');
         contents.forEach(function(content) {
             var projectId = content.id.replace('workflows-', '');
@@ -83,6 +192,13 @@
                 icon.classList.add('fa-chevron-down');
             }
         });
+        
+        // Restore filters
+        var savedSearch = localStorage.getItem('searchFilter');
+        var savedStatus = localStorage.getItem('statusFilter');
+        if (savedSearch) document.getElementById('searchInput').value = savedSearch;
+        if (savedStatus) document.getElementById('statusFilter').value = savedStatus;
+        if (savedSearch || savedStatus) filterProjects();
     };
     </script>
 </head>
@@ -96,6 +212,94 @@
             <button onclick="collapseAll()" class="control-btn">
                 <i class="fa fa-minus-square-o"></i> Collapse All
             </button>
+        </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+        {% set total_workflows = namespace(count=0) %}
+        {% set total_success = namespace(count=0) %}
+        {% set total_failure = namespace(count=0) %}
+        {% set total_pending = namespace(count=0) %}
+        {% set total_stale = namespace(count=0) %}
+        
+        {% for project in all_projects %}
+            {% set total_workflows.count = total_workflows.count + project.other_workflows|length %}
+            {% set total_success.count = total_success.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length) %}
+            {% set total_failure.count = total_failure.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length) %}
+            {% set total_stale.count = total_stale.count + (project.other_workflows|selectattr('is_stale', 'equalto', true)|list|length) %}
+        {% endfor %}
+        {% set total_pending.count = total_workflows.count - total_success.count - total_failure.count %}
+        
+        <div class="stat-card">
+            <div class="stat-number">{{all_projects|length}}</div>
+            <div class="stat-label">Projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{total_workflows.count}}</div>
+            <div class="stat-label">Workflows</div>
+        </div>
+        <div class="stat-card success-stat">
+            <div class="stat-number">{{total_success.count}}</div>
+            <div class="stat-label">Success</div>
+        </div>
+        <div class="stat-card failure-stat">
+            <div class="stat-number">{{total_failure.count}}</div>
+            <div class="stat-label">Failures</div>
+        </div>
+        <div class="stat-card pending-stat">
+            <div class="stat-number">{{total_pending.count}}</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card stale-stat">
+            <div class="stat-number">{{total_stale.count}}</div>
+            <div class="stat-label">Stale</div>
+        </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="filter-panel">
+        <div class="filter-group">
+            <label for="searchInput">
+                <i class="fa fa-search"></i> Search Projects:
+            </label>
+            <input type="text" 
+                   id="searchInput" 
+                   class="filter-input" 
+                   placeholder="Filter by project name..."
+                   oninput="filterProjects()">
+        </div>
+        
+        <div class="filter-group">
+            <label for="statusFilter">
+                <i class="fa fa-filter"></i> Status:
+            </label>
+            <select id="statusFilter" class="filter-select" onchange="filterProjects()">
+                <option value="all">All</option>
+                <option value="healthy">Healthy (no failures)</option>
+                <option value="failure">Has Failures</option>
+                <option value="success">Has Success</option>
+                <option value="pending">Has Pending</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="sortSelect">
+                <i class="fa fa-sort"></i> Sort:
+            </label>
+            <select id="sortSelect" class="filter-select" onchange="sortProjects(this.value)">
+                <option value="name">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="failures">Most Failures</option>
+            </select>
+        </div>
+        
+        <button onclick="clearFilters()" class="clear-btn">
+            <i class="fa fa-times"></i> Clear Filters
+        </button>
+        
+        <div class="filter-results" id="filterResults">
+            {{all_projects|length}} of {{all_projects|length}} projects
         </div>
     </div>
 
