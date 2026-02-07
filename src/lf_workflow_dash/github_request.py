@@ -4,6 +4,9 @@ import pytz
 import requests
 import yaml
 
+# Constants
+MAX_ERROR_TEXT_LENGTH = 100  # Maximum length of error text to include in error messages
+
 
 def get_conclusion_time(last_run):
     """Get the workflow conclusion time and set the proper timezone
@@ -151,6 +154,6 @@ def fetch_all_workflows(owner, repo, token):
     else:
         error_msg = f"Error fetching workflows for {owner}/{repo}: {response.status_code}"
         if response.text:
-            error_msg += f" - {response.text[:100]}"  # Limit error text to 100 chars
+            error_msg += f" - {response.text[:MAX_ERROR_TEXT_LENGTH]}"
         print(f"    {error_msg}")
         return []
