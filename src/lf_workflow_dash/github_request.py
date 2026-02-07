@@ -149,5 +149,5 @@ def fetch_all_workflows(owner, repo, token):
                 workflow_files.append(filename)
         return workflow_files
     else:
-        print(f"    Error fetching workflows: {response.status_code}")
+        print(f"    Error fetching workflows for {owner}/{repo}: {response.status_code}")
         return []

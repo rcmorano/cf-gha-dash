@@ -9,6 +9,7 @@ from lf_workflow_dash.update_dashboard import update_html
 @pytest.mark.parametrize(
     "datafile, outfile",
     [
+        # Only testing tracked_workflows.yaml as other config files don't exist in this fork
         ("config/tracked_workflows.yaml", "lincc_output.html"),
     ],
 )

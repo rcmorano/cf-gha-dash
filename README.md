@@ -29,16 +29,16 @@ Keep reading to learn about modifying an existing dashboard, or how to build you
    ```yaml
    repos:
       - repo: REPO_NAME
-         owner: OWNER_NAME # github organization
-         smoke-test: smoke-test.yml
-         build-docs: build-documentation.yml
-         benchmarks: asv-nightly.yml
-         live-build: testing-and-coverage.yml
-         workflows: 
-            # Add custom workflows here
-            workflow-display-name: workflow-file.yml
-            another-workflow: another-file.yml
-         # Or use 'workflows: all' to automatically track all workflows in the repository
+        owner: OWNER_NAME # github organization
+        smoke-test: smoke-test.yml
+        build-docs: build-documentation.yml
+        benchmarks: asv-nightly.yml
+        live-build: testing-and-coverage.yml
+        workflows: 
+          # Add custom workflows here
+          workflow-display-name: workflow-file.yml
+          another-workflow: another-file.yml
+        # Or use: workflows: all
    ```
 
    We have columns for these 4 standard workflows (smoke-test, build-docs, benchmarks, live-build), and the value should be the leaf yaml file name. 
