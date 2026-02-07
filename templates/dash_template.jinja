@@ -1,58 +1,389 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>{{page_title}}</title>
-        <link rel="icon" type="image/x-icon" href="img/favicon.png">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="css/styles.css">
-        <script>
-        setTimeout(function(){
-            window.location.reload();
-        }, 60000);
-        </script>
-    </head>
-    <body>
-    <table>
-        <tr>
-            <th colspan="1" scope="colgroup">Repository/workflow</th>
-            <th colspan="1" scope="colgroup">Status</th>
-            <th colspan="1" scope="colgroup">Last run</th>
-        </tr>
-    </tr>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{page_title}}</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+    // Auto-reload page every 60 seconds
+    setTimeout(function(){
+        window.location.reload();
+    }, 60000);
 
-    {% for project in all_projects %}
-    <tr>
-        <td><a href="{{project.repo_url}}">{{project.repo}}</a>
+    // Toggle collapse/expand for project workflows
+    function toggleProject(projectId) {
+        var content = document.getElementById('workflows-' + projectId);
+        var icon = document.getElementById('icon-' + projectId);
+        
+        if (content.style.display === "none") {
+            content.style.display = "table-row-group";
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+            localStorage.setItem('project-' + projectId, 'expanded');
+        } else {
+            content.style.display = "none";
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+            localStorage.setItem('project-' + projectId, 'collapsed');
+        }
+    }
 
-          <!-- Other -->
-          {% for workflow in project.other_workflows %}
-          <tr>
-              <td class="indented">{{workflow.lf_workflow_name}} </td>
-              <td class="{{workflow.display_class}} align-center">
-                  {%- if workflow.is_stale %}
-                  <span class="gray-cell">stale</span>
-                  <i class="gray-cell fa fa-clock-o"></i><br>
-                  {%- endif %}
-                  {{workflow.workflow_status}}
-                  <i class="{{workflow.icon_class}}"></i>
-              </td>
-              <td class="{{workflow.display_class}} align-center">
-                  <a href="{{workflow.workflow_url}}">
-                      {{workflow.conclusion_time}}
-                  </a>
-              </td>
-          </tr>
-        </td>
+    // Collapse all projects
+    function collapseAll() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        var icons = document.querySelectorAll('[id^="icon-"]');
+        
+        contents.forEach(function(content) {
+            content.style.display = "none";
+            var projectId = content.id.replace('workflows-', '');
+            localStorage.setItem('project-' + projectId, 'collapsed');
+        });
+        
+        icons.forEach(function(icon) {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+        });
+    }
+
+    // Expand all projects
+    function expandAll() {
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        var icons = document.querySelectorAll('[id^="icon-"]');
+        
+        contents.forEach(function(content) {
+            content.style.display = "table-row-group";
+            var projectId = content.id.replace('workflows-', '');
+            localStorage.setItem('project-' + projectId, 'expanded');
+        });
+        
+        icons.forEach(function(icon) {
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+        });
+    }
+
+    // Filter projects by search term
+    function filterProjects() {
+        var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        var statusFilter = document.getElementById('statusFilter').value;
+        var projectGroups = document.querySelectorAll('.project-group');
+        
+        var visibleCount = 0;
+        projectGroups.forEach(function(group) {
+            var projectName = group.querySelector('.project-name strong').textContent.toLowerCase();
+            var statusBadges = group.querySelector('.project-summary');
+            
+            // Check search term match
+            var matchesSearch = projectName.includes(searchTerm);
+            
+            // Check status filter match
+            var matchesStatus = true;
+            if (statusFilter !== 'all') {
+                var hasSuccess = statusBadges.querySelector('.success-badge') !== null;
+                var hasFailure = statusBadges.querySelector('.failure-badge') !== null;
+                var hasPending = statusBadges.querySelector('.pending-badge') !== null;
+                var hasStale = statusBadges.querySelector('.stale-badge') !== null;
+                
+                if (statusFilter === 'success' && !hasSuccess) matchesStatus = false;
+                if (statusFilter === 'failure' && !hasFailure) matchesStatus = false;
+                if (statusFilter === 'pending' && !hasPending) matchesStatus = false;
+                if (statusFilter === 'stale' && !hasStale) matchesStatus = false;
+                if (statusFilter === 'healthy' && hasFailure) matchesStatus = false;
+            }
+            
+            // Get corresponding workflows tbody
+            var projectHeader = group.querySelector('.project-header');
+            var projectId = projectHeader.getAttribute('onclick').match(/'([^']+)'/)[1];
+            var workflowsBody = document.getElementById('workflows-' + projectId);
+            
+            if (matchesSearch && matchesStatus) {
+                group.style.display = 'table-row-group';
+                if (workflowsBody) workflowsBody.style.display = 'table-row-group';
+                visibleCount++;
+            } else {
+                group.style.display = 'none';
+                if (workflowsBody) workflowsBody.style.display = 'none';
+            }
+        });
+        
+        // Update filter results count
+        var totalCount = projectGroups.length;
+        document.getElementById('filterResults').textContent = 
+            visibleCount + ' of ' + totalCount + ' projects';
+        
+        // Save filter state
+        localStorage.setItem('searchFilter', searchTerm);
+        localStorage.setItem('statusFilter', statusFilter);
+    }
+
+    // Clear all filters
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('statusFilter').value = 'all';
+        localStorage.removeItem('searchFilter');
+        localStorage.removeItem('statusFilter');
+        filterProjects();
+    }
+
+    // Sort projects
+    function sortProjects(criteria) {
+        var table = document.querySelector('table');
+        var projectGroups = Array.from(document.querySelectorAll('.project-group'));
+        var workflowBodies = {};
+        
+        // Store workflow bodies
+        projectGroups.forEach(function(group) {
+            var projectHeader = group.querySelector('.project-header');
+            var projectId = projectHeader.getAttribute('onclick').match(/'([^']+)'/)[1];
+            var workflowsBody = document.getElementById('workflows-' + projectId);
+            if (workflowsBody) {
+                workflowBodies[projectId] = workflowsBody;
+            }
+        });
+        
+        // Sort based on criteria
+        projectGroups.sort(function(a, b) {
+            if (criteria === 'name') {
+                var nameA = a.querySelector('.project-name strong').textContent;
+                var nameB = b.querySelector('.project-name strong').textContent;
+                return nameA.localeCompare(nameB);
+            } else if (criteria === 'name-desc') {
+                var nameA = a.querySelector('.project-name strong').textContent;
+                var nameB = b.querySelector('.project-name strong').textContent;
+                return nameB.localeCompare(nameA);
+            } else if (criteria === 'failures') {
+                var failuresA = a.querySelector('.failure-badge') ? 
+                    parseInt(a.querySelector('.failure-badge').textContent.match(/\d+/)[0]) : 0;
+                var failuresB = b.querySelector('.failure-badge') ? 
+                    parseInt(b.querySelector('.failure-badge').textContent.match(/\d+/)[0]) : 0;
+                return failuresB - failuresA;
+            }
+        });
+        
+        // Re-insert in sorted order
+        var thead = table.querySelector('thead');
+        projectGroups.forEach(function(group) {
+            table.appendChild(group);
+            var projectHeader = group.querySelector('.project-header');
+            var projectId = projectHeader.getAttribute('onclick').match(/'([^']+)'/)[1];
+            if (workflowBodies[projectId]) {
+                table.appendChild(workflowBodies[projectId]);
+            }
+        });
+    }
+
+    // Apply status filter from stat card click
+    function applyStatusFilter(status) {
+        document.getElementById('statusFilter').value = status;
+        filterProjects();
+    }
+
+    // Restore collapse state and filters from localStorage on page load
+    window.onload = function() {
+        // Restore collapse state
+        var contents = document.querySelectorAll('[id^="workflows-"]');
+        contents.forEach(function(content) {
+            var projectId = content.id.replace('workflows-', '');
+            var state = localStorage.getItem('project-' + projectId);
+            var icon = document.getElementById('icon-' + projectId);
+            
+            if (state === 'expanded') {
+                // Only expand if explicitly set to expanded
+                content.style.display = "table-row-group";
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                // Default to collapsed
+                content.style.display = "none";
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            }
+        });
+        
+        // Restore filters
+        var savedSearch = localStorage.getItem('searchFilter');
+        var savedStatus = localStorage.getItem('statusFilter');
+        if (savedSearch) document.getElementById('searchInput').value = savedSearch;
+        if (savedStatus) document.getElementById('statusFilter').value = savedStatus;
+        if (savedSearch || savedStatus) filterProjects();
+    };
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>{{page_title}}</h1>
+        <div class="controls">
+            <button onclick="expandAll()" class="control-btn">
+                <i class="fa fa-plus-square-o"></i> Expand All
+            </button>
+            <button onclick="collapseAll()" class="control-btn">
+                <i class="fa fa-minus-square-o"></i> Collapse All
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+        {% set total_workflows = namespace(count=0) %}
+        {% set total_success = namespace(count=0) %}
+        {% set total_failure = namespace(count=0) %}
+        {% set total_pending = namespace(count=0) %}
+        {% set total_stale = namespace(count=0) %}
+        
+        {% for project in all_projects %}
+            {% set total_workflows.count = total_workflows.count + project.other_workflows|length %}
+            {% set total_success.count = total_success.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length) %}
+            {% set total_failure.count = total_failure.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length) %}
+            {% set total_stale.count = total_stale.count + (project.other_workflows|selectattr('is_stale', 'equalto', true)|list|length) %}
         {% endfor %}
-    </tr>
-    {% endfor %}
+        {% set total_pending.count = total_workflows.count - total_success.count - total_failure.count %}
+        
+        <div class="stat-card">
+            <div class="stat-number">{{all_projects|length}}</div>
+            <div class="stat-label">Projects</div>
+        </div>
+        <div class="stat-card clickable" onclick="clearFilters()" title="Click to clear all filters">
+            <div class="stat-number">{{total_workflows.count}}</div>
+            <div class="stat-label">Workflows</div>
+        </div>
+        <div class="stat-card success-stat clickable" onclick="applyStatusFilter('success')" title="Click to filter projects with successes">
+            <div class="stat-number">{{total_success.count}}</div>
+            <div class="stat-label">Success</div>
+        </div>
+        <div class="stat-card failure-stat clickable" onclick="applyStatusFilter('failure')" title="Click to filter projects with failures">
+            <div class="stat-number">{{total_failure.count}}</div>
+            <div class="stat-label">Failures</div>
+        </div>
+        <div class="stat-card pending-stat clickable" onclick="applyStatusFilter('pending')" title="Click to filter projects with pending workflows">
+            <div class="stat-number">{{total_pending.count}}</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card stale-stat clickable" onclick="applyStatusFilter('stale')" title="Click to filter projects with stale workflows">
+            <div class="stat-number">{{total_stale.count}}</div>
+            <div class="stat-label">Stale</div>
+        </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="filter-panel">
+        <div class="filter-group">
+            <label for="searchInput">
+                <i class="fa fa-search"></i> Search Projects:
+            </label>
+            <input type="text" 
+                   id="searchInput" 
+                   class="filter-input" 
+                   placeholder="Filter by project name..."
+                   oninput="filterProjects()">
+        </div>
+        
+        <div class="filter-group">
+            <label for="statusFilter">
+                <i class="fa fa-filter"></i> Status:
+            </label>
+            <select id="statusFilter" class="filter-select" onchange="filterProjects()">
+                <option value="all">All</option>
+                <option value="healthy">Healthy (no failures)</option>
+                <option value="failure">Has Failures</option>
+                <option value="success">Has Success</option>
+                <option value="pending">Has Pending</option>
+                <option value="stale">Has Stale</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="sortSelect">
+                <i class="fa fa-sort"></i> Sort:
+            </label>
+            <select id="sortSelect" class="filter-select" onchange="sortProjects(this.value)">
+                <option value="name">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="failures">Most Failures</option>
+            </select>
+        </div>
+        
+        <button onclick="clearFilters()" class="clear-btn">
+            <i class="fa fa-times"></i> Clear Filters
+        </button>
+        
+        <div class="filter-results" id="filterResults">
+            {{all_projects|length}} of {{all_projects|length}} projects
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="1" scope="colgroup">Organization/Repository/Workflow</th>
+                <th colspan="1" scope="colgroup">Status</th>
+                <th colspan="1" scope="colgroup">Last Run</th>
+            </tr>
+        </thead>
+
+        {% for project in all_projects %}
+        <tbody class="project-group">
+            <!-- Project Header Row -->
+            <tr class="project-header" onclick="toggleProject('{{project.repo}}')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('{{project.repo}}')">
+                <td class="project-name">
+                    <i id="icon-{{project.repo}}" class="fa fa-chevron-right toggle-icon"></i>
+                    <a href="{{project.repo_url}}" onclick="event.stopPropagation();">
+                        <strong>{{project.owner}}/{{project.repo}}</strong>
+                    </a>
+                    <span class="workflow-count">({{project.other_workflows|length}} workflows)</span>
+                    <span class="project-summary">
+                        {% set success_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length %}
+                        {% set failure_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length %}
+                        {% set pending_count = project.other_workflows|length - success_count - failure_count %}
+                        {% set stale_count = project.other_workflows|selectattr('is_stale', 'equalto', true)|list|length %}
+                        
+                        {% if success_count > 0 %}
+                            <span class="status-badge success-badge">✓ {{success_count}}</span>
+                        {% endif %}
+                        {% if failure_count > 0 %}
+                            <span class="status-badge failure-badge">✗ {{failure_count}}</span>
+                        {% endif %}
+                        {% if pending_count > 0 %}
+                            <span class="status-badge pending-badge">? {{pending_count}}</span>
+                        {% endif %}
+                        {% if stale_count > 0 %}
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> {{stale_count}}</span>
+                        {% endif %}
+                    </span>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+
+        <!-- Workflow Rows (Collapsible) -->
+        <tbody id="workflows-{{project.repo}}" class="workflows-content">
+            {% for workflow in project.other_workflows %}
+            <tr class="workflow-row">
+                <td class="workflow-name">{{workflow.lf_workflow_name}}</td>
+                <td class="{{workflow.display_class}} align-center">
+                    {%- if workflow.is_stale %}
+                    <span class="stale-badge"><i class="fa fa-clock-o"></i> stale</span>
+                    {%- endif %}
+                    <span class="status-text">{{workflow.workflow_status}}</span>
+                    <i class="{{workflow.icon_class}}"></i>
+                </td>
+                <td class="{{workflow.display_class}} align-center">
+                    <a href="{{workflow.workflow_url}}">
+                        {{workflow.conclusion_time}}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% endfor %}
     </table>
 
-    <p>
+    <p class="footer">
         Last Updated {{last_updated}} | 
-        <a href='https://github.com/lincc-frameworks/{{dash_repo}}'><i class=\"fa fa-github\"></i> {{dash_repo}}</a>
+        <a href='https://github.com/lincc-frameworks/{{dash_repo}}'><i class="fa fa-github"></i> {{dash_repo}}</a>
     </p>
 
-    </body>
+</body>
 </html>
