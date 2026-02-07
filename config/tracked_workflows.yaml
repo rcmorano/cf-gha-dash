@@ -3,20 +3,20 @@ page_title: cf-gha-tracked-workflows
 repos:  
   - repo: cardano-devkit
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       create-release: release.yml
       run-tests: test.yml
       ship-release-artifacts: publish.yml
 
   - repo: cardano-graphql
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       post-integration: post_integration.yml
       ci: ci.yml
 
   - repo: cardano-rosetta
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       api-test: api-test.yml
       ci: ci.yml
       nightly: nightly.yml
@@ -26,7 +26,7 @@ repos:
 
   - repo: cardano-rosetta-java
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       bump-version: bump-version.yaml
       build-docker-file: docker-build.yaml
       build-main-branch: main.yaml
@@ -38,12 +38,12 @@ repos:
 
   - repo: cardano-token-registry
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       ci: ci.yaml
 
   - repo: cardano-wallet
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       auto-approve-docs: approve-docs.yml
       ci: haskell.yml
       delete-old-workflow-runs: cleanup.yml
@@ -53,17 +53,17 @@ repos:
 
   - repo: cf-explorer-landing
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       vercel-deploy: gh-vercel-deploy.yaml
 
   - repo: cf-helm-charts
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       release-charts: release.yml
 
   - repo: cf-ledger-sync
     owner: cardano-foundation
-    other-workflows: 
+    workflows: 
       build: build.yml
       codeql: codeql.yml
       docs-deploy: docs-deploy.yml
@@ -72,7 +72,7 @@ repos:
   
   - repo: cf-identity-wallet
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       docker-builds: docker-builds.yaml
       e2e-mobile-tests: e2e_mobile_tests.yaml 
       verify-branch: gh-verify-branch.yaml
@@ -80,19 +80,23 @@ repos:
 
   - repo: cf-lob-platform
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       build: build.yml
       run-tests: build-with-tests.yaml
 
   - repo: developer-portal
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       codeql: codeql-analysis.yml
       yarn-build: yarn-build.yml
 
   - repo: merkle-tree-java
     owner: cardano-foundation
-    other-workflows:
+    workflows:
       build: build.yml
       codeql: codeql.yml
       create-release: maven-release.yml
+
+  - repo: cf-gha-dash
+    owner: rcmorano
+    workflows: all

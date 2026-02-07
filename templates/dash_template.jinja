@@ -233,10 +233,10 @@
         {% set total_stale = namespace(count=0) %}
         
         {% for project in all_projects %}
-            {% set total_workflows.count = total_workflows.count + project.other_workflows|length %}
-            {% set total_success.count = total_success.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length) %}
-            {% set total_failure.count = total_failure.count + (project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length) %}
-            {% set total_stale.count = total_stale.count + (project.other_workflows|selectattr('is_stale', 'equalto', true)|list|length) %}
+            {% set total_workflows.count = total_workflows.count + project.workflows|length %}
+            {% set total_success.count = total_success.count + (project.workflows|selectattr('workflow_status', 'equalto', 'success')|list|length) %}
+            {% set total_failure.count = total_failure.count + (project.workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length) %}
+            {% set total_stale.count = total_stale.count + (project.workflows|selectattr('is_stale', 'equalto', true)|list|length) %}
         {% endfor %}
         {% set total_pending.count = total_workflows.count - total_success.count - total_failure.count %}
         
@@ -331,12 +331,12 @@
                     <a href="{{project.repo_url}}" onclick="event.stopPropagation();">
                         <strong>{{project.owner}}/{{project.repo}}</strong>
                     </a>
-                    <span class="workflow-count">({{project.other_workflows|length}} workflows)</span>
+                    <span class="workflow-count">({{project.workflows|length}} workflows)</span>
                     <span class="project-summary">
-                        {% set success_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length %}
-                        {% set failure_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length %}
-                        {% set pending_count = project.other_workflows|length - success_count - failure_count %}
-                        {% set stale_count = project.other_workflows|selectattr('is_stale', 'equalto', true)|list|length %}
+                        {% set success_count = project.workflows|selectattr('workflow_status', 'equalto', 'success')|list|length %}
+                        {% set failure_count = project.workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length %}
+                        {% set pending_count = project.workflows|length - success_count - failure_count %}
+                        {% set stale_count = project.workflows|selectattr('is_stale', 'equalto', true)|list|length %}
                         
                         {% if success_count > 0 %}
                             <span class="status-badge success-badge">✓ {{success_count}}</span>
@@ -359,7 +359,7 @@
 
         <!-- Workflow Rows (Collapsible) -->
         <tbody id="workflows-{{project.repo}}" class="workflows-content">
-            {% for workflow in project.other_workflows %}
+            {% for workflow in project.workflows %}
             <tr class="workflow-row">
                 <td class="workflow-name">{{workflow.lf_workflow_name}}</td>
                 <td class="{{workflow.display_class}} align-center">

@@ -4,6 +4,9 @@ import pytz
 import requests
 import yaml
 
+# Constants
+MAX_ERROR_TEXT_LENGTH = 100  # Maximum length of error text to include in error messages
+
 
 def get_conclusion_time(last_run):
     """Get the workflow conclusion time and set the proper timezone
@@ -74,7 +77,7 @@ def update_workflow_status(workflow_elem, token):
             conclusion = last_run["conclusion"]
 
             # Get the time this workflow concluded (in New York time)
-            (conclusion_time, is_stale) = get_conclusion_time(last_run)
+            conclusion_time, is_stale = get_conclusion_time(last_run)
 
             # Check if the workflow is currently being executed
             if conclusion is None:
@@ -82,7 +85,7 @@ def update_workflow_status(workflow_elem, token):
                 if len(response_json["workflow_runs"]) > 1:
                     last_run = response_json["workflow_runs"][1]
                     conclusion = last_run["conclusion"]
-                    (conclusion_time, is_stale) = get_conclusion_time(last_run)
+                    conclusion_time, is_stale = get_conclusion_time(last_run)
                 else:
                     conclusion = "pending"
                     conclusion_time = ""
@@ -117,3 +120,40 @@ def update_copier_version(project_data, token):
     response = requests.request("GET", request_url, headers=headers, timeout=15)
 
     project_data.copier_version = _read_copier_version(response.content)
+
+
+def fetch_all_workflows(owner, repo, token):
+    """Fetch all workflow file names from a repository using GitHub API.
+
+    Args:
+        owner (str): repository owner
+        repo (str): repository name
+        token (str): auth token for hitting the github API
+
+    Returns:
+        list: list of workflow file names (e.g., ['ci.yml', 'test.yml'])
+    """
+    request_url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows"
+    headers = {
+        "accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+    }
+    response = requests.request("GET", request_url, headers=headers, timeout=15)
+
+    if response.status_code == 200:
+        workflows_data = response.json()
+        # Extract workflow file names from the path
+        workflow_files = []
+        for workflow in workflows_data.get("workflows", []):
+            # The path is like ".github/workflows/ci.yml", we want just "ci.yml"
+            path = workflow.get("path", "")
+            filename = path.split("/")[-1] if path else ""
+            if filename:
+                workflow_files.append(filename)
+        return workflow_files
+    else:
+        error_msg = f"Error fetching workflows for {owner}/{repo}: {response.status_code}"
+        if response.text:
+            error_msg += f" - {response.text[:MAX_ERROR_TEXT_LENGTH]}"
+        print(f"    {error_msg}")
+        return []
