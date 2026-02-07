@@ -84,10 +84,12 @@
                 var hasSuccess = statusBadges.querySelector('.success-badge') !== null;
                 var hasFailure = statusBadges.querySelector('.failure-badge') !== null;
                 var hasPending = statusBadges.querySelector('.pending-badge') !== null;
+                var hasStale = statusBadges.querySelector('.stale-badge') !== null;
                 
                 if (statusFilter === 'success' && !hasSuccess) matchesStatus = false;
                 if (statusFilter === 'failure' && !hasFailure) matchesStatus = false;
                 if (statusFilter === 'pending' && !hasPending) matchesStatus = false;
+                if (statusFilter === 'stale' && !hasStale) matchesStatus = false;
                 if (statusFilter === 'healthy' && hasFailure) matchesStatus = false;
             }
             
@@ -302,7 +304,7 @@
             <div class="stat-number">13</div>
             <div class="stat-label">Projects</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card clickable" onclick="clearFilters()" title="Click to clear all filters">
             <div class="stat-number">44</div>
             <div class="stat-label">Workflows</div>
         </div>
@@ -318,7 +320,7 @@
             <div class="stat-number">13</div>
             <div class="stat-label">Pending</div>
         </div>
-        <div class="stat-card stale-stat">
+        <div class="stat-card stale-stat clickable" onclick="applyStatusFilter('stale')" title="Click to filter projects with stale workflows">
             <div class="stat-number">23</div>
             <div class="stat-label">Stale</div>
         </div>
@@ -347,6 +349,7 @@
                 <option value="failure">Has Failures</option>
                 <option value="success">Has Success</option>
                 <option value="pending">Has Pending</option>
+                <option value="stale">Has Stale</option>
             </select>
         </div>
         
@@ -373,7 +376,7 @@
     <table>
         <thead>
             <tr>
-                <th colspan="1" scope="colgroup">Repository/Workflow</th>
+                <th colspan="1" scope="colgroup">Organization/Repository/Workflow</th>
                 <th colspan="1" scope="colgroup">Status</th>
                 <th colspan="1" scope="colgroup">Last Run</th>
             </tr>
@@ -386,23 +389,28 @@
                 <td class="project-name">
                     <i id="icon-cardano-devkit" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-devkit" onclick="event.stopPropagation();">
-                        <strong>cardano-devkit</strong>
+                        <strong>cardano-foundation/cardano-devkit</strong>
                     </a>
                     <span class="workflow-count">(3 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 2</span>
+                        
+                        
+                            <span class="status-badge failure-badge">✗ 1</span>
+                        
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 3</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 2</span>
-                    
-                    
-                        <span class="status-badge failure-badge">✗ 1</span>
-                    
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -460,21 +468,26 @@
                 <td class="project-name">
                     <i id="icon-cardano-graphql" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-graphql" onclick="event.stopPropagation();">
-                        <strong>cardano-graphql</strong>
+                        <strong>cardano-foundation/cardano-graphql</strong>
                     </a>
                     <span class="workflow-count">(2 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 2</span>
+                        
+                        
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 1</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 2</span>
-                    
-                    
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -517,23 +530,28 @@
                 <td class="project-name">
                     <i id="icon-cardano-rosetta" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-rosetta" onclick="event.stopPropagation();">
-                        <strong>cardano-rosetta</strong>
+                        <strong>cardano-foundation/cardano-rosetta</strong>
                     </a>
                     <span class="workflow-count">(6 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 4</span>
+                        
+                        
+                        
+                            <span class="status-badge pending-badge">? 2</span>
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 4</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 4</span>
-                    
-                    
-                    
-                        <span class="status-badge pending-badge">? 2</span>
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -631,25 +649,30 @@
                 <td class="project-name">
                     <i id="icon-cardano-rosetta-java" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-rosetta-java" onclick="event.stopPropagation();">
-                        <strong>cardano-rosetta-java</strong>
+                        <strong>cardano-foundation/cardano-rosetta-java</strong>
                     </a>
                     <span class="workflow-count">(8 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 4</span>
+                        
+                        
+                            <span class="status-badge failure-badge">✗ 2</span>
+                        
+                        
+                            <span class="status-badge pending-badge">? 2</span>
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 2</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 4</span>
-                    
-                    
-                        <span class="status-badge failure-badge">✗ 2</span>
-                    
-                    
-                        <span class="status-badge pending-badge">? 2</span>
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -771,21 +794,24 @@
                 <td class="project-name">
                     <i id="icon-cardano-token-registry" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-token-registry" onclick="event.stopPropagation();">
-                        <strong>cardano-token-registry</strong>
+                        <strong>cardano-foundation/cardano-token-registry</strong>
                     </a>
                     <span class="workflow-count">(1 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 1</span>
+                        
+                        
+                        
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 1</span>
-                    
-                    
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -814,23 +840,28 @@
                 <td class="project-name">
                     <i id="icon-cardano-wallet" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-wallet" onclick="event.stopPropagation();">
-                        <strong>cardano-wallet</strong>
+                        <strong>cardano-foundation/cardano-wallet</strong>
                     </a>
                     <span class="workflow-count">(6 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge failure-badge">✗ 2</span>
+                        
+                        
+                            <span class="status-badge pending-badge">? 4</span>
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 4</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge failure-badge">✗ 2</span>
-                    
-                    
-                        <span class="status-badge pending-badge">? 4</span>
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -928,21 +959,26 @@
                 <td class="project-name">
                     <i id="icon-cf-explorer-landing" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-explorer-landing" onclick="event.stopPropagation();">
-                        <strong>cf-explorer-landing</strong>
+                        <strong>cardano-foundation/cf-explorer-landing</strong>
                     </a>
                     <span class="workflow-count">(1 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 1</span>
+                        
+                        
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 1</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 1</span>
-                    
-                    
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -972,21 +1008,24 @@
                 <td class="project-name">
                     <i id="icon-cf-helm-charts" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-helm-charts" onclick="event.stopPropagation();">
-                        <strong>cf-helm-charts</strong>
+                        <strong>cardano-foundation/cf-helm-charts</strong>
                     </a>
                     <span class="workflow-count">(1 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 1</span>
+                        
+                        
+                        
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 1</span>
-                    
-                    
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -1015,23 +1054,28 @@
                 <td class="project-name">
                     <i id="icon-cf-ledger-sync" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-ledger-sync" onclick="event.stopPropagation();">
-                        <strong>cf-ledger-sync</strong>
+                        <strong>cardano-foundation/cf-ledger-sync</strong>
                     </a>
                     <span class="workflow-count">(5 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 4</span>
+                        
+                        
+                        
+                            <span class="status-badge pending-badge">? 1</span>
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 4</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 4</span>
-                    
-                    
-                    
-                        <span class="status-badge pending-badge">? 1</span>
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -1116,25 +1160,30 @@
                 <td class="project-name">
                     <i id="icon-cf-identity-wallet" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-identity-wallet" onclick="event.stopPropagation();">
-                        <strong>cf-identity-wallet</strong>
+                        <strong>cardano-foundation/cf-identity-wallet</strong>
                     </a>
                     <span class="workflow-count">(4 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 2</span>
+                        
+                        
+                            <span class="status-badge failure-badge">✗ 1</span>
+                        
+                        
+                            <span class="status-badge pending-badge">? 1</span>
+                        
+                        
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> 4</span>
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 2</span>
-                    
-                    
-                        <span class="status-badge failure-badge">✗ 1</span>
-                    
-                    
-                        <span class="status-badge pending-badge">? 1</span>
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -1206,21 +1255,24 @@
                 <td class="project-name">
                     <i id="icon-cf-lob-platform" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-lob-platform" onclick="event.stopPropagation();">
-                        <strong>cf-lob-platform</strong>
+                        <strong>cardano-foundation/cf-lob-platform</strong>
                     </a>
                     <span class="workflow-count">(2 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 2</span>
+                        
+                        
+                        
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 2</span>
-                    
-                    
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -1262,21 +1314,24 @@
                 <td class="project-name">
                     <i id="icon-developer-portal" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/developer-portal" onclick="event.stopPropagation();">
-                        <strong>developer-portal</strong>
+                        <strong>cardano-foundation/developer-portal</strong>
                     </a>
                     <span class="workflow-count">(2 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge success-badge">✓ 2</span>
+                        
+                        
+                        
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge success-badge">✓ 2</span>
-                    
-                    
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -1318,21 +1373,24 @@
                 <td class="project-name">
                     <i id="icon-merkle-tree-java" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/merkle-tree-java" onclick="event.stopPropagation();">
-                        <strong>merkle-tree-java</strong>
+                        <strong>cardano-foundation/merkle-tree-java</strong>
                     </a>
                     <span class="workflow-count">(3 workflows)</span>
+                    <span class="project-summary">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                            <span class="status-badge pending-badge">? 3</span>
+                        
+                        
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                        <span class="status-badge pending-badge">? 3</span>
-                    
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>
@@ -1384,7 +1442,7 @@
     </table>
 
     <p class="footer">
-        Last Updated 05:16 February 07, 2026 (US-NYC) | 
+        Last Updated 05:32 February 07, 2026 (US-NYC) | 
         <a href='https://github.com/lincc-frameworks/lf-workflow-dash'><i class="fa fa-github"></i> lf-workflow-dash</a>
     </p>
 
