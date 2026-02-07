@@ -96,3 +96,7 @@ repos:
       build: build.yml
       codeql: codeql.yml
       create-release: maven-release.yml
+
+  - name: cf-gha-dash
+    owner: rcmorano
+    workflows: all
