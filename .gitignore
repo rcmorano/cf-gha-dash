@@ -155,3 +155,5 @@ generate_example.py
 html/example_dashboard.html
 test_dashboard.py
 html/test_dashboard.html
+test_dashboard2.py
+html/test_dashboard2.html

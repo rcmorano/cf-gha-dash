@@ -84,10 +84,12 @@
                 var hasSuccess = statusBadges.querySelector('.success-badge') !== null;
                 var hasFailure = statusBadges.querySelector('.failure-badge') !== null;
                 var hasPending = statusBadges.querySelector('.pending-badge') !== null;
+                var hasStale = statusBadges.querySelector('.stale-badge') !== null;
                 
                 if (statusFilter === 'success' && !hasSuccess) matchesStatus = false;
                 if (statusFilter === 'failure' && !hasFailure) matchesStatus = false;
                 if (statusFilter === 'pending' && !hasPending) matchesStatus = false;
+                if (statusFilter === 'stale' && !hasStale) matchesStatus = false;
                 if (statusFilter === 'healthy' && hasFailure) matchesStatus = false;
             }
             
@@ -242,7 +244,7 @@
             <div class="stat-number">{{all_projects|length}}</div>
             <div class="stat-label">Projects</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card clickable" onclick="clearFilters()" title="Click to clear all filters">
             <div class="stat-number">{{total_workflows.count}}</div>
             <div class="stat-label">Workflows</div>
         </div>
@@ -258,7 +260,7 @@
             <div class="stat-number">{{total_pending.count}}</div>
             <div class="stat-label">Pending</div>
         </div>
-        <div class="stat-card stale-stat">
+        <div class="stat-card stale-stat clickable" onclick="applyStatusFilter('stale')" title="Click to filter projects with stale workflows">
             <div class="stat-number">{{total_stale.count}}</div>
             <div class="stat-label">Stale</div>
         </div>
@@ -287,6 +289,7 @@
                 <option value="failure">Has Failures</option>
                 <option value="success">Has Success</option>
                 <option value="pending">Has Pending</option>
+                <option value="stale">Has Stale</option>
             </select>
         </div>
         
@@ -313,7 +316,7 @@
     <table>
         <thead>
             <tr>
-                <th colspan="1" scope="colgroup">Repository/Workflow</th>
+                <th colspan="1" scope="colgroup">Organization/Repository/Workflow</th>
                 <th colspan="1" scope="colgroup">Status</th>
                 <th colspan="1" scope="colgroup">Last Run</th>
             </tr>
@@ -326,25 +329,30 @@
                 <td class="project-name">
                     <i id="icon-{{project.repo}}" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="{{project.repo_url}}" onclick="event.stopPropagation();">
-                        <strong>{{project.repo}}</strong>
+                        <strong>{{project.owner}}/{{project.repo}}</strong>
                     </a>
                     <span class="workflow-count">({{project.other_workflows|length}} workflows)</span>
+                    <span class="project-summary">
+                        {% set success_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length %}
+                        {% set failure_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length %}
+                        {% set pending_count = project.other_workflows|length - success_count - failure_count %}
+                        {% set stale_count = project.other_workflows|selectattr('is_stale', 'equalto', true)|list|length %}
+                        
+                        {% if success_count > 0 %}
+                            <span class="status-badge success-badge">✓ {{success_count}}</span>
+                        {% endif %}
+                        {% if failure_count > 0 %}
+                            <span class="status-badge failure-badge">✗ {{failure_count}}</span>
+                        {% endif %}
+                        {% if pending_count > 0 %}
+                            <span class="status-badge pending-badge">? {{pending_count}}</span>
+                        {% endif %}
+                        {% if stale_count > 0 %}
+                            <span class="status-badge stale-badge"><i class="fa fa-clock-o"></i> {{stale_count}}</span>
+                        {% endif %}
+                    </span>
                 </td>
-                <td class="project-summary align-center">
-                    {% set success_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'success')|list|length %}
-                    {% set failure_count = project.other_workflows|selectattr('workflow_status', 'equalto', 'failure')|list|length %}
-                    {% set pending_count = project.other_workflows|length - success_count - failure_count %}
-                    
-                    {% if success_count > 0 %}
-                        <span class="status-badge success-badge">✓ {{success_count}}</span>
-                    {% endif %}
-                    {% if failure_count > 0 %}
-                        <span class="status-badge failure-badge">✗ {{failure_count}}</span>
-                    {% endif %}
-                    {% if pending_count > 0 %}
-                        <span class="status-badge pending-badge">? {{pending_count}}</span>
-                    {% endif %}
-                </td>
+                <td></td>
                 <td></td>
             </tr>
         </tbody>

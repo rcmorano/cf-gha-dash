@@ -298,10 +298,11 @@ thead th {
 
 /* Status badges in project summary */
 .project-summary {
-  display: flex;
-  justify-content: center;
+  display: inline-flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-left: 12px;
+  align-items: center;
 }
 
 .status-badge {
@@ -332,6 +333,12 @@ thead th {
   border: 1px solid #9e6a03;
 }
 
+.stale-badge {
+  background: rgba(139, 148, 158, 0.15);
+  color: #8b949e;
+  border: 1px solid #484f58;
+}
+
 /* Workflow Rows */
 .workflows-content {
   background: #161b22;
@@ -360,8 +367,8 @@ thead th {
   margin-right: 6px;
 }
 
-/* Stale badge */
-.stale-badge {
+/* Stale badge in workflow rows */
+.workflow-row .stale-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
