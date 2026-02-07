@@ -160,6 +160,11 @@ def read_yaml_file(file_path):
                             lf_workflow_name=key,
                         )
                     )
+            else:
+                # Invalid format - log warning and skip
+                print(
+                    f"Warning: '{workflows_key}' for {owner}/{repo} must be either 'all' or a dictionary. Skipping."
+                )
 
         all_projects.append(project_data)
 

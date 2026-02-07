@@ -149,5 +149,8 @@ def fetch_all_workflows(owner, repo, token):
                 workflow_files.append(filename)
         return workflow_files
     else:
-        print(f"    Error fetching workflows for {owner}/{repo}: {response.status_code}")
+        error_msg = f"Error fetching workflows for {owner}/{repo}: {response.status_code}"
+        if response.text:
+            error_msg += f" - {response.text[:100]}"  # Limit error text to 100 chars
+        print(f"    {error_msg}")
         return []

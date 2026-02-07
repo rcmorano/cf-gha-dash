@@ -83,3 +83,28 @@ repos:
     project = context["all_projects"][0]
     assert project.fetch_all_workflows
     assert len(project.workflows) == 0  # Should be empty until fetch_all_workflows is processed
+
+
+def test_workflows_invalid_value(tmp_path, capsys):
+    """Test that invalid workflows value is handled gracefully."""
+    yaml_content = """
+page_title: test-dash
+repos:
+  - repo: test-repo
+    owner: test-owner
+    workflows: invalid_string
+"""
+    yaml_path = os.path.join(tmp_path, "test_invalid_workflows.yaml")
+    with open(yaml_path, "w") as f:
+        f.write(yaml_content)
+
+    context = read_yaml_file(yaml_path)
+    assert len(context["all_projects"]) == 1
+    project = context["all_projects"][0]
+    assert not project.fetch_all_workflows
+    assert len(project.workflows) == 0
+
+    # Check that warning message was printed
+    captured = capsys.readouterr()
+    assert "Warning:" in captured.out
+    assert "must be either 'all' or a dictionary" in captured.out
