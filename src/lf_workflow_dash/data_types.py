@@ -67,7 +67,8 @@ class ProjectData:
     benchmarks: WorkflowElemData = None
     live_build: WorkflowElemData = None
 
-    other_workflows: List[WorkflowElemData] = field(default_factory=list)
+    workflows: List[WorkflowElemData] = field(default_factory=list)
+    fetch_all_workflows: bool = False
 
     def __post_init__(self):
         self.repo_url = f"https://github.com/{self.owner}/{self.repo}"
@@ -116,13 +117,29 @@ def read_yaml_file(file_path):
                 item["live-build"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="live-build"
             )
 
-        if "other-workflows" in item:
-            for key, value in item["other-workflows"].items():
-                project_data.other_workflows.append(
-                    WorkflowElemData(
-                        value, repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name=key
+        # Support both "workflows" (new) and "other-workflows" (old) keys for backwards compatibility
+        workflows_key = None
+        if "workflows" in item:
+            workflows_key = "workflows"
+        elif "other-workflows" in item:
+            workflows_key = "other-workflows"
+
+        if workflows_key:
+            workflows_value = item[workflows_key]
+            
+            # Check if the value is "all" - this will be handled later in update_dashboard.py
+            # For now, we just mark it so we know to fetch all workflows
+            if workflows_value == "all":
+                # We'll set a flag that will be processed during status update
+                project_data.fetch_all_workflows = True
+            elif isinstance(workflows_value, dict):
+                # Standard dictionary format: {show-name: workflow_file.yml}
+                for key, value in workflows_value.items():
+                    project_data.workflows.append(
+                        WorkflowElemData(
+                            value, repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name=key
+                        )
                     )
-                )
 
         all_projects.append(project_data)
 
