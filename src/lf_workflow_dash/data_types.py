@@ -102,19 +102,35 @@ def read_yaml_file(file_path):
 
         if "smoke-test" in item:
             project_data.smoke_test = WorkflowElemData(
-                item["smoke-test"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="smoke-test"
+                item["smoke-test"],
+                repo_url=project_data.repo_url,
+                owner=owner,
+                repo=repo,
+                lf_workflow_name="smoke-test",
             )
         if "build-docs" in item:
             project_data.build_docs = WorkflowElemData(
-                item["build-docs"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="build-docs"
+                item["build-docs"],
+                repo_url=project_data.repo_url,
+                owner=owner,
+                repo=repo,
+                lf_workflow_name="build-docs",
             )
         if "benchmarks" in item:
             project_data.benchmarks = WorkflowElemData(
-                item["benchmarks"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="benchmarks"
+                item["benchmarks"],
+                repo_url=project_data.repo_url,
+                owner=owner,
+                repo=repo,
+                lf_workflow_name="benchmarks",
             )
         if "live-build" in item:
             project_data.live_build = WorkflowElemData(
-                item["live-build"], repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name="live-build"
+                item["live-build"],
+                repo_url=project_data.repo_url,
+                owner=owner,
+                repo=repo,
+                lf_workflow_name="live-build",
             )
 
         # Support both "workflows" (new) and "other-workflows" (old) keys for backwards compatibility
@@ -126,7 +142,7 @@ def read_yaml_file(file_path):
 
         if workflows_key:
             workflows_value = item[workflows_key]
-            
+
             # Check if the value is "all" - this will be handled later in update_dashboard.py
             # For now, we just mark it so we know to fetch all workflows
             if workflows_value == "all":
@@ -137,7 +153,11 @@ def read_yaml_file(file_path):
                 for key, value in workflows_value.items():
                     project_data.workflows.append(
                         WorkflowElemData(
-                            value, repo_url=project_data.repo_url, owner=owner, repo=repo, lf_workflow_name=key
+                            value,
+                            repo_url=project_data.repo_url,
+                            owner=owner,
+                            repo=repo,
+                            lf_workflow_name=key,
                         )
                     )
 

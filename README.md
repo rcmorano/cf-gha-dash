@@ -34,12 +34,18 @@ Keep reading to learn about modifying an existing dashboard, or how to build you
          build-docs: build-documentation.yml
          benchmarks: asv-nightly.yml
          live-build: testing-and-coverage.yml
-         other_workflows: 
-         # Add more workflows if necessary
+         workflows: 
+            # Add custom workflows here
+            workflow-display-name: workflow-file.yml
+            another-workflow: another-file.yml
+         # Or use 'workflows: all' to automatically track all workflows in the repository
    ```
 
-   We have columns for these 4 workflows, and the value should be the leaf yaml
-   file name. If you have additional workflows, you can add them as `other_workflows`.
+   We have columns for these 4 standard workflows (smoke-test, build-docs, benchmarks, live-build), and the value should be the leaf yaml file name. 
+   
+   For additional workflows, you can add them under the `workflows` key in two ways:
+   - **Dictionary format**: Specify custom display names for each workflow (e.g., `workflow-display-name: workflow-file.yml`)
+   - **Auto-discover**: Use `workflows: all` to automatically track all workflows from the repository
 
 2. **Or, submit an Issue**
 

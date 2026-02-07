@@ -33,7 +33,7 @@ repos:
     yaml_path = os.path.join(tmp_path, "test_workflows.yaml")
     with open(yaml_path, "w") as f:
         f.write(yaml_content)
-    
+
     context = read_yaml_file(yaml_path)
     assert len(context["all_projects"]) == 1
     project = context["all_projects"][0]
@@ -41,7 +41,7 @@ repos:
     assert project.workflows[0].lf_workflow_name in ["test-workflow", "build"]
     assert project.workflows[0].workflow_name in ["test.yml", "build.yml"]
     assert not project.fetch_all_workflows
-    
+
     # Test with old 'other-workflows' key (backwards compatibility)
     yaml_content = """
 page_title: test-dash
@@ -55,7 +55,7 @@ repos:
     yaml_path = os.path.join(tmp_path, "test_other_workflows.yaml")
     with open(yaml_path, "w") as f:
         f.write(yaml_content)
-    
+
     context = read_yaml_file(yaml_path)
     assert len(context["all_projects"]) == 1
     project = context["all_projects"][0]
@@ -76,7 +76,7 @@ repos:
     yaml_path = os.path.join(tmp_path, "test_all_workflows.yaml")
     with open(yaml_path, "w") as f:
         f.write(yaml_content)
-    
+
     context = read_yaml_file(yaml_path)
     assert len(context["all_projects"]) == 1
     project = context["all_projects"][0]

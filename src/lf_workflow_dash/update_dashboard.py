@@ -27,7 +27,7 @@ def update_status(context, token):
     for project in context["all_projects"]:
         print(project.repo)
         update_copier_version(project, token)
-        
+
         # If fetch_all_workflows is True, fetch all workflows from the repository
         if project.fetch_all_workflows:
             print("  Fetching all workflows from repository...")
@@ -35,17 +35,17 @@ def update_status(context, token):
             for workflow_file in workflow_files:
                 # Create a WorkflowElemData for each workflow file
                 # Use the filename (without extension) as the display name
-                workflow_name = workflow_file.replace('.yml', '').replace('.yaml', '')
+                workflow_name = workflow_file.replace(".yml", "").replace(".yaml", "")
                 project.workflows.append(
                     WorkflowElemData(
                         workflow_file,
                         repo_url=project.repo_url,
                         owner=project.owner,
                         repo=project.repo,
-                        lf_workflow_name=workflow_name
+                        lf_workflow_name=workflow_name,
                     )
                 )
-        
+
         update_workflow_status(project.smoke_test, token)
         update_workflow_status(project.build_docs, token)
         update_workflow_status(project.benchmarks, token)
