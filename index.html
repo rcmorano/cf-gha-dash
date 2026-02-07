@@ -172,6 +172,12 @@
         });
     }
 
+    // Apply status filter from stat card click
+    function applyStatusFilter(status) {
+        document.getElementById('statusFilter').value = status;
+        filterProjects();
+    }
+
     // Restore collapse state and filters from localStorage on page load
     window.onload = function() {
         // Restore collapse state
@@ -181,15 +187,16 @@
             var state = localStorage.getItem('project-' + projectId);
             var icon = document.getElementById('icon-' + projectId);
             
-            if (state === 'collapsed') {
-                content.style.display = "none";
-                icon.classList.remove('fa-chevron-down');
-                icon.classList.add('fa-chevron-right');
-            } else {
-                // Default to expanded
+            if (state === 'expanded') {
+                // Only expand if explicitly set to expanded
                 content.style.display = "table-row-group";
                 icon.classList.remove('fa-chevron-right');
                 icon.classList.add('fa-chevron-down');
+            } else {
+                // Default to collapsed
+                content.style.display = "none";
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
             }
         });
         
@@ -299,15 +306,15 @@
             <div class="stat-number">44</div>
             <div class="stat-label">Workflows</div>
         </div>
-        <div class="stat-card success-stat">
+        <div class="stat-card success-stat clickable" onclick="applyStatusFilter('success')" title="Click to filter projects with successes">
             <div class="stat-number">25</div>
             <div class="stat-label">Success</div>
         </div>
-        <div class="stat-card failure-stat">
+        <div class="stat-card failure-stat clickable" onclick="applyStatusFilter('failure')" title="Click to filter projects with failures">
             <div class="stat-number">6</div>
             <div class="stat-label">Failures</div>
         </div>
-        <div class="stat-card pending-stat">
+        <div class="stat-card pending-stat clickable" onclick="applyStatusFilter('pending')" title="Click to filter projects with pending workflows">
             <div class="stat-number">13</div>
             <div class="stat-label">Pending</div>
         </div>
@@ -377,7 +384,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cardano-devkit')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-devkit')">
                 <td class="project-name">
-                    <i id="icon-cardano-devkit" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cardano-devkit" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-devkit" onclick="event.stopPropagation();">
                         <strong>cardano-devkit</strong>
                     </a>
@@ -451,7 +458,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cardano-graphql')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-graphql')">
                 <td class="project-name">
-                    <i id="icon-cardano-graphql" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cardano-graphql" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-graphql" onclick="event.stopPropagation();">
                         <strong>cardano-graphql</strong>
                     </a>
@@ -508,7 +515,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cardano-rosetta')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-rosetta')">
                 <td class="project-name">
-                    <i id="icon-cardano-rosetta" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cardano-rosetta" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-rosetta" onclick="event.stopPropagation();">
                         <strong>cardano-rosetta</strong>
                     </a>
@@ -622,7 +629,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cardano-rosetta-java')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-rosetta-java')">
                 <td class="project-name">
-                    <i id="icon-cardano-rosetta-java" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cardano-rosetta-java" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-rosetta-java" onclick="event.stopPropagation();">
                         <strong>cardano-rosetta-java</strong>
                     </a>
@@ -762,7 +769,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cardano-token-registry')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-token-registry')">
                 <td class="project-name">
-                    <i id="icon-cardano-token-registry" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cardano-token-registry" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-token-registry" onclick="event.stopPropagation();">
                         <strong>cardano-token-registry</strong>
                     </a>
@@ -805,7 +812,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cardano-wallet')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cardano-wallet')">
                 <td class="project-name">
-                    <i id="icon-cardano-wallet" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cardano-wallet" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cardano-wallet" onclick="event.stopPropagation();">
                         <strong>cardano-wallet</strong>
                     </a>
@@ -919,7 +926,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cf-explorer-landing')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-explorer-landing')">
                 <td class="project-name">
-                    <i id="icon-cf-explorer-landing" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cf-explorer-landing" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-explorer-landing" onclick="event.stopPropagation();">
                         <strong>cf-explorer-landing</strong>
                     </a>
@@ -963,7 +970,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cf-helm-charts')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-helm-charts')">
                 <td class="project-name">
-                    <i id="icon-cf-helm-charts" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cf-helm-charts" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-helm-charts" onclick="event.stopPropagation();">
                         <strong>cf-helm-charts</strong>
                     </a>
@@ -1006,7 +1013,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cf-ledger-sync')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-ledger-sync')">
                 <td class="project-name">
-                    <i id="icon-cf-ledger-sync" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cf-ledger-sync" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-ledger-sync" onclick="event.stopPropagation();">
                         <strong>cf-ledger-sync</strong>
                     </a>
@@ -1107,7 +1114,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cf-identity-wallet')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-identity-wallet')">
                 <td class="project-name">
-                    <i id="icon-cf-identity-wallet" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cf-identity-wallet" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-identity-wallet" onclick="event.stopPropagation();">
                         <strong>cf-identity-wallet</strong>
                     </a>
@@ -1197,7 +1204,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('cf-lob-platform')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-lob-platform')">
                 <td class="project-name">
-                    <i id="icon-cf-lob-platform" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-cf-lob-platform" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/cf-lob-platform" onclick="event.stopPropagation();">
                         <strong>cf-lob-platform</strong>
                     </a>
@@ -1253,7 +1260,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('developer-portal')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('developer-portal')">
                 <td class="project-name">
-                    <i id="icon-developer-portal" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-developer-portal" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/developer-portal" onclick="event.stopPropagation();">
                         <strong>developer-portal</strong>
                     </a>
@@ -1285,7 +1292,7 @@
                 </td>
                 <td class="green-cell align-center">
                     <a href="https://github.com/cardano-foundation/developer-portal/actions/workflows/codeql-analysis.yml">
-                        11:56<br>02/06/26
+                        04:39<br>02/07/26
                     </a>
                 </td>
             </tr>
@@ -1298,7 +1305,7 @@
                 </td>
                 <td class="green-cell align-center">
                     <a href="https://github.com/cardano-foundation/developer-portal/actions/workflows/yarn-build.yml">
-                        11:55<br>02/06/26
+                        04:38<br>02/07/26
                     </a>
                 </td>
             </tr>
@@ -1309,7 +1316,7 @@
             <!-- Project Header Row -->
             <tr class="project-header" onclick="toggleProject('merkle-tree-java')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('merkle-tree-java')">
                 <td class="project-name">
-                    <i id="icon-merkle-tree-java" class="fa fa-chevron-down toggle-icon"></i>
+                    <i id="icon-merkle-tree-java" class="fa fa-chevron-right toggle-icon"></i>
                     <a href="https://github.com/cardano-foundation/merkle-tree-java" onclick="event.stopPropagation();">
                         <strong>merkle-tree-java</strong>
                     </a>
@@ -1377,7 +1384,7 @@
     </table>
 
     <p class="footer">
-        Last Updated 16:17 February 06, 2026 (US-NYC) | 
+        Last Updated 05:16 February 07, 2026 (US-NYC) | 
         <a href='https://github.com/lincc-frameworks/lf-workflow-dash'><i class="fa fa-github"></i> lf-workflow-dash</a>
     </p>
 
