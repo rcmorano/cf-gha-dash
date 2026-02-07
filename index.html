@@ -298,31 +298,26 @@
             
             
         
-            
-            
-            
-            
-        
         
         
         <div class="stat-card">
-            <div class="stat-number">14</div>
+            <div class="stat-number">13</div>
             <div class="stat-label">Projects</div>
         </div>
         <div class="stat-card clickable" onclick="clearFilters()" title="Click to clear all filters">
-            <div class="stat-number">50</div>
+            <div class="stat-number">44</div>
             <div class="stat-label">Workflows</div>
         </div>
         <div class="stat-card success-stat clickable" onclick="applyStatusFilter('success')" title="Click to filter projects with successes">
-            <div class="stat-number">26</div>
+            <div class="stat-number">25</div>
             <div class="stat-label">Success</div>
         </div>
         <div class="stat-card failure-stat clickable" onclick="applyStatusFilter('failure')" title="Click to filter projects with failures">
-            <div class="stat-number">8</div>
+            <div class="stat-number">6</div>
             <div class="stat-label">Failures</div>
         </div>
         <div class="stat-card pending-stat clickable" onclick="applyStatusFilter('pending')" title="Click to filter projects with pending workflows">
-            <div class="stat-number">16</div>
+            <div class="stat-number">13</div>
             <div class="stat-label">Pending</div>
         </div>
         <div class="stat-card stale-stat clickable" onclick="applyStatusFilter('stale')" title="Click to filter projects with stale workflows">
@@ -374,7 +369,7 @@
         </button>
         
         <div class="filter-results" id="filterResults">
-            14 of 14 projects
+            13 of 13 projects
         </div>
     </div>
 
@@ -1444,125 +1439,10 @@
             
         </tbody>
         
-        <tbody class="project-group">
-            <!-- Project Header Row -->
-            <tr class="project-header" onclick="toggleProject('cf-gha-dash')" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' ')toggleProject('cf-gha-dash')">
-                <td class="project-name">
-                    <i id="icon-cf-gha-dash" class="fa fa-chevron-right toggle-icon"></i>
-                    <a href="https://github.com/rcmorano/cf-gha-dash" onclick="event.stopPropagation();">
-                        <strong>rcmorano/cf-gha-dash</strong>
-                    </a>
-                    <span class="workflow-count">(6 workflows)</span>
-                    <span class="project-summary">
-                        
-                        
-                        
-                        
-                        
-                        
-                            <span class="status-badge success-badge">✓ 1</span>
-                        
-                        
-                            <span class="status-badge failure-badge">✗ 2</span>
-                        
-                        
-                            <span class="status-badge pending-badge">? 3</span>
-                        
-                        
-                    </span>
-                </td>
-                <td></td>
-                <td></td>
-            </tr>
-        </tbody>
-
-        <!-- Workflow Rows (Collapsible) -->
-        <tbody id="workflows-cf-gha-dash" class="workflows-content">
-            
-            <tr class="workflow-row">
-                <td class="workflow-name">main</td>
-                <td class="red-cell align-center">
-                    <span class="status-text">failure</span>
-                    <i class="fa fa-times-circle"></i>
-                </td>
-                <td class="red-cell align-center">
-                    <a href="https://github.com/rcmorano/cf-gha-dash/actions/workflows/main.yml">
-                        06:01<br>02/07/26
-                    </a>
-                </td>
-            </tr>
-            
-            <tr class="workflow-row">
-                <td class="workflow-name">pre-commit-ci</td>
-                <td class="red-cell align-center">
-                    <span class="status-text">failure</span>
-                    <i class="fa fa-times-circle"></i>
-                </td>
-                <td class="red-cell align-center">
-                    <a href="https://github.com/rcmorano/cf-gha-dash/actions/workflows/pre-commit-ci.yml">
-                        05:59<br>02/07/26
-                    </a>
-                </td>
-            </tr>
-            
-            <tr class="workflow-row">
-                <td class="workflow-name">smoke-test</td>
-                <td class="yellow-cell align-center">
-                    <span class="status-text">not yet run</span>
-                    <i class="fa fa-question-circle"></i>
-                </td>
-                <td class="yellow-cell align-center">
-                    <a href="https://github.com/rcmorano/cf-gha-dash/actions/workflows/smoke-test.yml">
-                        
-                    </a>
-                </td>
-            </tr>
-            
-            <tr class="workflow-row">
-                <td class="workflow-name">testing-and-coverage</td>
-                <td class="green-cell align-center">
-                    <span class="status-text">success</span>
-                    <i class="fa fa-check-circle"></i>
-                </td>
-                <td class="green-cell align-center">
-                    <a href="https://github.com/rcmorano/cf-gha-dash/actions/workflows/testing-and-coverage.yml">
-                        06:04<br>02/07/26
-                    </a>
-                </td>
-            </tr>
-            
-            <tr class="workflow-row">
-                <td class="workflow-name">copilot</td>
-                <td class="yellow-cell align-center">
-                    <span class="status-text">404</span>
-                    <i class="fa fa-question-circle"></i>
-                </td>
-                <td class="yellow-cell align-center">
-                    <a href="https://github.com/rcmorano/cf-gha-dash/actions/workflows/copilot">
-                        
-                    </a>
-                </td>
-            </tr>
-            
-            <tr class="workflow-row">
-                <td class="workflow-name">pages-build-deployment</td>
-                <td class="yellow-cell align-center">
-                    <span class="status-text">404</span>
-                    <i class="fa fa-question-circle"></i>
-                </td>
-                <td class="yellow-cell align-center">
-                    <a href="https://github.com/rcmorano/cf-gha-dash/actions/workflows/pages-build-deployment">
-                        
-                    </a>
-                </td>
-            </tr>
-            
-        </tbody>
-        
     </table>
 
     <p class="footer">
-        Last Updated 06:03 February 07, 2026 (US-NYC) | 
+        Last Updated 06:05 February 07, 2026 (US-NYC) | 
         <a href='https://github.com/lincc-frameworks/lf-workflow-dash'><i class="fa fa-github"></i> lf-workflow-dash</a>
     </p>
 
