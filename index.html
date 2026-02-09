@@ -309,7 +309,7 @@
             <div class="stat-label">Workflows</div>
         </div>
         <div class="stat-card success-stat clickable" onclick="applyStatusFilter('success')" title="Click to filter projects with successes">
-            <div class="stat-number">23</div>
+            <div class="stat-number">22</div>
             <div class="stat-label">Success</div>
         </div>
         <div class="stat-card failure-stat clickable" onclick="applyStatusFilter('failure')" title="Click to filter projects with failures">
@@ -317,7 +317,7 @@
             <div class="stat-label">Failures</div>
         </div>
         <div class="stat-card pending-stat clickable" onclick="applyStatusFilter('pending')" title="Click to filter projects with pending workflows">
-            <div class="stat-number">15</div>
+            <div class="stat-number">16</div>
             <div class="stat-label">Pending</div>
         </div>
         <div class="stat-card stale-stat clickable" onclick="applyStatusFilter('stale')" title="Click to filter projects with stale workflows">
@@ -1265,9 +1265,11 @@
                         
                         
                         
-                            <span class="status-badge success-badge">✓ 2</span>
+                            <span class="status-badge success-badge">✓ 1</span>
                         
                         
+                        
+                            <span class="status-badge pending-badge">? 1</span>
                         
                         
                     </span>
@@ -1288,20 +1290,20 @@
                 </td>
                 <td class="green-cell align-center">
                     <a href="https://github.com/cardano-foundation/cf-lob-platform/actions/workflows/build.yml">
-                        01:27<br>02/09/26
+                        03:29<br>02/09/26
                     </a>
                 </td>
             </tr>
             
             <tr class="workflow-row">
                 <td class="workflow-name">run-tests</td>
-                <td class="green-cell align-center">
-                    <span class="status-text">success</span>
-                    <i class="fa fa-check-circle"></i>
+                <td class="yellow-cell align-center">
+                    <span class="status-text">None</span>
+                    <i class="fa fa-question-circle"></i>
                 </td>
-                <td class="green-cell align-center">
+                <td class="yellow-cell align-center">
                     <a href="https://github.com/cardano-foundation/cf-lob-platform/actions/workflows/build-with-tests.yaml">
-                        02:26<br>02/09/26
+                        03:21<br>02/09/26
                     </a>
                 </td>
             </tr>
@@ -1442,7 +1444,7 @@
     </table>
 
     <p class="footer">
-        Last Updated 03:14 February 09, 2026 (US-NYC) | 
+        Last Updated 03:34 February 09, 2026 (US-NYC) | 
         <a href='https://github.com/lincc-frameworks/lf-workflow-dash'><i class="fa fa-github"></i> lf-workflow-dash</a>
     </p>
 
